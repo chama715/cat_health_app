@@ -11,7 +11,7 @@ import SwiftUI
 struct cat_health_appApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TitleView()
         }
     }
 }
