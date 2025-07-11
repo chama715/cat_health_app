@@ -5,11 +5,16 @@
 //  Created by 高橋直斗 on 2025/07/09.
 //
 
+/*
+ タイトル画面。
+ 今回は文字はカスタム文字を採用。
+ ボタンを2つ配置し、今回は簡単なナビゲーションリンクで。
+ */
+
+
 import SwiftUI
 
 struct TitleView: View {
-    
-    //@StateObject private var viewModel = TitleViewModel()
     
     var body: some View {
         ZStack {
@@ -50,7 +55,6 @@ struct TitleView: View {
                                     )
                                     .cornerRadius(30)
                                     .shadow(color: .gray.opacity(0.5), radius: 4, x: 0, y: 4)
-                                    .bold()
                             }
                 .padding()
                 
@@ -68,7 +72,6 @@ struct TitleView: View {
                                    )
                                    .cornerRadius(30)
                                    .shadow(color: .gray.opacity(0.5), radius: 4, x: 0, y: 4)
-                                   .bold()
                            }
                 .padding()
                 
