@@ -10,6 +10,10 @@ import SwiftUI
 struct MainView: View {
     @StateObject private var viewModel = MainViewModel()
     
+    @State private var showingDetailInput = false
+    @State private var selectedCategoryForDetail: RecordCategory? = nil
+    @State private var isCatSelectActive = false
+
     var body: some View {
         ZStack {
             Image("paw_background")
@@ -28,11 +32,21 @@ struct MainView: View {
             )
             .ignoresSafeArea()
             
-            VStack(spacing: 20) {
+            VStack {
+                
+                NavigationLink(destination: CatSelectView(), isActive: $isCatSelectActive) {
+                    EmptyView()
+                }
+                .hidden()
+                
                 petHeaderView
                 timelineView
                 categoryGridView
-                Spacer()
+            }
+        }
+        .sheet(item: $selectedCategoryForDetail) { category in
+            DetailInputView(RecordCategory: category) { detailText in
+                viewModel.addRecord(category: category, detail: detailText)
             }
         }
     }
@@ -108,13 +122,15 @@ struct MainView: View {
     
     // MARK: - 下部タイル
     private var categoryGridView: some View {
-        let columns = Array(repeating: GridItem(.fixed(50)), count: 5)
-
+        let columns = Array(repeating: GridItem(.fixed(50)), count: 6)
+        
         return LazyVGrid(columns: columns, spacing: 4) {
             ForEach(viewModel.categories) { category in
                 Button(action: {
-                    if category.requiresDetail {
-                        print("\(category.name) の詳細入力モーダルを表示予定")
+                    if category.name == "猫選択" {
+                        isCatSelectActive = true
+                    } else if category.requiresDetail {
+                        selectedCategoryForDetail = category
                     } else {
                         viewModel.addRecord(category: category)
                     }
@@ -123,11 +139,11 @@ struct MainView: View {
                         Image(systemName: category.iconName)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 40, height: 20)
+                            .frame(width: 40, height: 40)
                             .padding(3)
                             .background(Color.softTiffany.opacity(0.25))
                             .clipShape(Circle())
-
+                        
                         Text(category.name)
                             .font(.caption2)
                             .foregroundColor(.primary)
@@ -141,12 +157,6 @@ struct MainView: View {
             }
         }
     }
-
-
-
-
-    
-    
 }
 
 #Preview {

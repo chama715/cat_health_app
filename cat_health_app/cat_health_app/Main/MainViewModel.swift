@@ -38,9 +38,12 @@ class MainViewModel: ObservableObject {
         RecordCategory(name: "ブラシ", iconName: "paintbrush", requiresDetail: false),
         RecordCategory(name: "体調", iconName: "stethoscope", requiresDetail: true),
         RecordCategory(name: "くすり", iconName: "pills", requiresDetail: false),
-        RecordCategory(name: "日記", iconName: "list.clipboard", requiresDetail: true)
+        RecordCategory(name: "日記", iconName: "list.clipboard", requiresDetail: true),
+        RecordCategory(name: "猫選択", iconName: "pawprint.circle", requiresDetail: true),
+        RecordCategory(name: "設定", iconName: "gearshape", requiresDetail: true),
     ]
     
+    /// 詳細なし記録用
     func addRecord(category: RecordCategory) {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
@@ -48,10 +51,25 @@ class MainViewModel: ObservableObject {
         
         let newRecord = CatRecord(
             time: timeString,
-            content: category.name, // 表示名だけで統一
+            content: category.name,
             iconName: category.iconName
         )
+        records.append(newRecord)
+    }
+    
+    /// 詳細あり記録用
+    func addRecord(category: RecordCategory, detail: String) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        let timeString = formatter.string(from: Date())
         
+        let contentText = detail.isEmpty ? category.name : "\(category.name) \(detail)"
+        
+        let newRecord = CatRecord(
+            time: timeString,
+            content: contentText,
+            iconName: category.iconName
+        )
         records.append(newRecord)
     }
 }

@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct cat_health_appApp: App {
+    let persistenceController = PersistenceController.shared
+
     var body: some Scene {
         WindowGroup {
             TitleView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }

@@ -15,6 +15,7 @@
 
 import SwiftUI
 import PhotosUI
+import CoreData
 
 class CatRegisterViewModel: ObservableObject {
     @Published var catName: String = ""
@@ -32,14 +33,7 @@ class CatRegisterViewModel: ObservableObject {
         formatter.dateStyle = .long
         return formatter.string(from: birthDate)
     }
-
-
-    // 後で Firebase / CoreData に保存処理へ拡張
-    func registerCat() {
-        let ageComponents = calculateAgeComponents()
-        print("名前: \(catName), 性別: \(gender), 猫種: \(breed), 年齢: \(ageComponents.year ?? 0)歳\(ageComponents.month ?? 0)ヶ月, 生年月日: \(birthDate)")
-    }
-
+    
     func calculateAgeComponents() -> DateComponents {
         let calendar = Calendar.current
         let now = Date()
@@ -62,6 +56,32 @@ class CatRegisterViewModel: ObservableObject {
             await MainActor.run {
                 self.selectedImage = Image(uiImage: uiImage)
             }
+        }
+    }
+
+    @MainActor
+    func saveCat(context: NSManagedObjectContext) {
+        let newCat = CatEntity(context: context)
+        newCat.id = UUID()
+        newCat.name = catName
+        newCat.gender = gender
+        newCat.breed = breed
+        newCat.birthDate = birthDate
+        
+        // 画像データ変換
+        if let selectedImage = selectedImage {
+            let renderer = ImageRenderer(content: selectedImage)
+            if let uiImage = renderer.uiImage,
+               let imageData = uiImage.pngData() {
+                newCat.imageData = imageData
+            }
+        }
+        
+        do {
+            try context.save()
+            print("🐾 猫情報をCoreDataに保存しました！")
+        } catch {
+            print("❌ 猫情報の保存に失敗しました: \(error.localizedDescription)")
         }
     }
 }
