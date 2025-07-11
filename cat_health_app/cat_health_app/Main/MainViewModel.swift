@@ -35,7 +35,7 @@ class MainViewModel: ObservableObject {
         RecordCategory(name: "おやつ", iconName: "popcorn", requiresDetail: false),
         RecordCategory(name: "水", iconName: "waterbottle", requiresDetail: false),
         RecordCategory(name: "つめきり", iconName: "scissors", requiresDetail: false),
-        RecordCategory(name: "ブラッシング", iconName: "paintbrush", requiresDetail: false),
+        RecordCategory(name: "ブラシ", iconName: "paintbrush", requiresDetail: false),
         RecordCategory(name: "体調", iconName: "stethoscope", requiresDetail: true),
         RecordCategory(name: "くすり", iconName: "pills", requiresDetail: false),
         RecordCategory(name: "日記", iconName: "list.clipboard", requiresDetail: true)

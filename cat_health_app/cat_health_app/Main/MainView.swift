@@ -31,8 +31,8 @@ struct MainView: View {
             VStack(spacing: 20) {
                 petHeaderView
                 timelineView
-                Spacer()
                 categoryGridView
+                Spacer()
             }
         }
     }
@@ -108,7 +108,7 @@ struct MainView: View {
     
     // MARK: - 下部タイル
     private var categoryGridView: some View {
-        let columns = Array(repeating: GridItem(.fixed(70)), count: 5)
+        let columns = Array(repeating: GridItem(.fixed(50)), count: 5)
 
         return LazyVGrid(columns: columns, spacing: 4) {
             ForEach(viewModel.categories) { category in
@@ -123,7 +123,7 @@ struct MainView: View {
                         Image(systemName: category.iconName)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 18, height: 18)
+                            .frame(width: 40, height: 20)
                             .padding(3)
                             .background(Color.softTiffany.opacity(0.25))
                             .clipShape(Circle())
