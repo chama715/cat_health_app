@@ -8,27 +8,94 @@
 import SwiftUI
 
 struct CatSelectView: View {
+    @Environment(\.managedObjectContext) private var context
+    @StateObject private var viewModel: CatSelectViewModel
+    @AppStorage("selectedCatID") private var selectedCatID: String = ""
     @State private var isMainViewActive = false
-    
+
+    init() {
+        let context = PersistenceController.shared.container.viewContext
+        _viewModel = StateObject(wrappedValue: CatSelectViewModel(context: context))
+    }
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                Text("猫選択画面")
-                    .font(.largeTitle)
-                    .bold()
-                
-                // 今後猫の一覧表示や選択処理をここで行う
-                
-                Button("この猫で進む") {
-                    isMainViewActive = true
+            ZStack {
+                // 背景画像とグラデーション
+                Image("paw_background")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.white.opacity(0.2),
+                        Color.softTiffany.opacity(0.5),
+                        Color.white.opacity(0.2)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+
+                if viewModel.cats.isEmpty {
+                    Text("登録された猫がいません")
+                        .font(.custom("Jiyucho", size: 24))
+                        .padding()
+                } else {
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            ForEach(viewModel.cats, id: \.id) { cat in
+                                HStack {
+                                    if let imageData = cat.imageData,
+                                       let uiImage = UIImage(data: imageData) {
+                                        Image(uiImage: uiImage)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 50, height: 50)
+                                            .clipShape(Circle())
+                                            .overlay(Circle().stroke(Color.gray, lineWidth: 1))
+                                    } else {
+                                        Image(systemName: "photo")
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 50, height: 50)
+                                            .clipShape(Circle())
+                                            .overlay(Circle().stroke(Color.gray, lineWidth: 1))
+                                    }
+
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(cat.name ?? "名前なし")
+                                            .font(.custom("Jiyucho", size: 20))
+                                            .foregroundColor(.black)
+                                        Text(cat.breed ?? "猫種不明")
+                                            .font(.custom("Jiyucho", size: 12))
+                                            .foregroundColor(.black)
+                                        if let birthDate = cat.birthDate {
+                                            Text("年齢: \(viewModel.calculateAgeText(from: birthDate))")
+                                                .font(.custom("Jiyucho", size: 12))
+                                                .foregroundColor(.black)
+                                        }
+                                    }
+                                    Spacer()
+                                }
+                                .frame(width: 300)
+                                .padding()
+                                .background(Color.white.opacity(0.8))
+                                .cornerRadius(12)
+                                .onTapGesture {
+                                    viewModel.selectCat(cat)
+                                    if let id = cat.id?.uuidString {
+                                        selectedCatID = id
+                                        isMainViewActive = true
+                                    }
+                                }
+                            }
+                        }
+                        .padding()
+                    }
                 }
-                .padding()
-                .frame(width: 200)
-                .background(Color.softTiffany)
-                .foregroundColor(.white)
-                .cornerRadius(12)
-                
-                // ✅ MainViewへのNavigationLink
+
                 NavigationLink(destination: MainView(), isActive: $isMainViewActive) {
                     EmptyView()
                 }
