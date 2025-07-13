@@ -11,8 +11,8 @@ struct SettingView: View {
 
     @StateObject var viewModel = SettingViewModel()
     @State private var showingDeleteAlert = false
+    @State private var isReturnToTitleActive = false
     @EnvironmentObject var navigationModel: NavigationModel
-
 
     var body: some View {
         ZStack {
@@ -45,7 +45,7 @@ struct SettingView: View {
                         .alert("本当にすべてのデータを削除しますか？", isPresented: $showingDeleteAlert) {
                             Button("削除", role: .destructive) {
                                 viewModel.deleteAllData()
-                                navigationModel.path = NavigationPath()
+                                isReturnToTitleActive = true
                             }
                             Button("キャンセル", role: .cancel) {}
                         }
@@ -77,6 +77,12 @@ struct SettingView: View {
                 .padding()
             }
             .frame(width: 400)
+
+            NavigationLink(destination: TitleView().environmentObject(navigationModel),
+                           isActive: $isReturnToTitleActive) {
+                EmptyView()
+            }
+            .hidden()
         }
     }
 }
