@@ -21,3 +21,6 @@ struct RecordCategory: Identifiable {
     let requiresDetail: Bool
 }
 
+class NavigationModel: ObservableObject {
+    @Published var path = NavigationPath()
+}

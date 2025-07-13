@@ -15,14 +15,17 @@
 import SwiftUI
 
 struct TitleView: View {
+    @EnvironmentObject var navigationModel: NavigationModel
+
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationModel.path) {
             ZStack {
+                // 背景画像とグラデーション
                 Image("paw_background")
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
-                
+
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color.white.opacity(0.2),
@@ -33,14 +36,17 @@ struct TitleView: View {
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
-                
+
+                // 中央のテキスト＆ボタン
                 VStack {
                     Spacer()
+
                     Text("ねこ手帳")
                         .font(.custom("Jiyucho", size: 50))
-                    
+
                     Spacer()
-                    
+
+                    // ペット選択へ
                     NavigationLink(destination: CatSelectView()) {
                         Text("ペット選択へ")
                             .font(.custom("Jiyucho", size: 32))
@@ -57,7 +63,8 @@ struct TitleView: View {
                             .shadow(color: .gray.opacity(0.5), radius: 4, x: 0, y: 4)
                     }
                     .padding()
-                    
+
+                    // ペット登録へ
                     NavigationLink(destination: CatRegisterView()) {
                         Text("ペット登録へ")
                             .font(.custom("Jiyucho", size: 32))
@@ -74,7 +81,7 @@ struct TitleView: View {
                             .shadow(color: .gray.opacity(0.5), radius: 4, x: 0, y: 4)
                     }
                     .padding()
-                    
+
                     Spacer()
                 }
             }
@@ -84,4 +91,5 @@ struct TitleView: View {
 
 #Preview {
     TitleView()
+        .environmentObject(NavigationModel())
 }

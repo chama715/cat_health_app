@@ -8,14 +8,18 @@
 import SwiftUI
 
 struct MainView: View {
+    @EnvironmentObject var navigationModel: NavigationModel
     @StateObject private var viewModel = MainViewModel()
 
     @State private var showingDetailInput = false
     @State private var selectedCategoryForDetail: RecordCategory? = nil
     @State private var isCatSelectActive = false
     @State private var currentDate: Date = Date()
+    @State private var isSettingActive = false
+    @State private var isTitleReturnActive = false
 
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
+
 
     @FetchRequest(
         entity: CatEntity.entity(),
@@ -51,9 +55,6 @@ struct MainView: View {
                 categoryGridView
             }
             .frame(maxHeight: .infinity, alignment: .top)
-
-
-            
             .onAppear {
                 viewModel.fetchRecords(for: currentDate)
             }
@@ -65,15 +66,27 @@ struct MainView: View {
                 EmptyView()
             }
             .hidden()
+
+            NavigationLink(
+                destination: SettingView()
+                    .environmentObject(navigationModel),
+                isActive: $isSettingActive
+            ) {
+                EmptyView()
+            }
+            .hidden()
+
+            NavigationLink(destination: TitleView(), isActive: $isTitleReturnActive) {
+                EmptyView()
+            }
+            .hidden()
         }
         .sheet(item: $selectedCategoryForDetail) { (category: RecordCategory) in
-            DetailInputView(RecordCategory: category) { detailText in
-                viewModel.addRecord(category: category, detail: detailText)
+            DetailInputView(RecordCategory: category, recordDate: currentDate) { detailText, selectedDate in
+                viewModel.addRecord(category: category, detail: detailText, for: selectedDate)
             }
         }
     }
-
-
 
     // MARK: - ペット情報ヘッダー
     private var petHeaderView: some View {
@@ -86,7 +99,6 @@ struct MainView: View {
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.white, lineWidth: 2))
                         .shadow(radius: 3)
-                        
                 } else {
                     Image(systemName: "photo")
                         .resizable()
@@ -94,9 +106,7 @@ struct MainView: View {
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.white, lineWidth: 2))
                         .shadow(radius: 3)
-                        
                 }
-                    
 
                 VStack {
                     Text(cat.name ?? "名前なし")
@@ -104,13 +114,10 @@ struct MainView: View {
                     if let birthDate = cat.birthDate {
                         Text(calculateAge(from: birthDate))
                             .font(.custom("Jiyucho", size: 12))
-                           
                     }
                     Text(cat.breed ?? "猫種不明")
                         .font(.custom("Jiyucho", size: 12))
-                        
                 }
-                
             } else {
                 Text("猫が選択されていません")
                     .font(.custom("Jiyucho", size: 20))
@@ -122,11 +129,10 @@ struct MainView: View {
                 Image(systemName: "calendar")
                     .font(.system(size: 24))
                     .foregroundColor(.black)
-                    
             }
         }
     }
-    
+
     // MARK: - 日付表示と切り替えボタン
     private var dateNavigationView: some View {
         HStack {
@@ -135,10 +141,10 @@ struct MainView: View {
             }) {
                 Image(systemName: "chevron.left")
             }
-            
+
             Text(formattedDate(currentDate))
                 .font(.custom("Jiyucho", size: 20))
-            
+
             Button(action: {
                 currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
             }) {
@@ -148,9 +154,7 @@ struct MainView: View {
         .padding(.horizontal)
     }
 
-    
-
-    // MARK: - 中央部タイムライン（白背景固定内でスクロール）
+    // MARK: - 中央部タイムライン
     private var timelineView: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
@@ -196,10 +200,12 @@ struct MainView: View {
                 Button(action: {
                     if category.name == "猫選択" {
                         isCatSelectActive = true
+                    } else if category.name == "設定" {
+                        isSettingActive = true
                     } else if category.requiresDetail {
                         selectedCategoryForDetail = category
                     } else {
-                        viewModel.addRecord(category: category)
+                        viewModel.addRecord(category: category, for: currentDate)
                     }
                 }) {
                     VStack(spacing: 1) {
@@ -235,7 +241,7 @@ struct MainView: View {
     }
 }
 
-// MARK: - 日付変更のやつ
+// MARK: - 日付フォーマット
 private func formattedDate(_ date: Date) -> String {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ja_JP")

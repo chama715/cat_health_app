@@ -9,10 +9,21 @@
         <attribute name="name" attributeType="String"/>
     </entity>
     <entity name="DailyRecordEntity" representedClassName="DailyRecordEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="categoryName" attributeType="String"/>
         <attribute name="condition" optional="YES" attributeType="String"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="detail" optional="YES" attributeType="String"/>
         <attribute name="foodAmount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="iconName" optional="YES" attributeType="String"/>
         <attribute name="memo" optional="YES" attributeType="String"/>
         <attribute name="poopStatus" optional="YES" attributeType="String"/>
+        <attribute name="time" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="RecordEntity" representedClassName="RecordEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="categoryName" attributeType="String"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="detail" optional="YES" attributeType="String"/>
+        <attribute name="iconName" attributeType="String"/>
+        <attribute name="time" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
 </model>

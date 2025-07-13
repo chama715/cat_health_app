@@ -10,11 +10,13 @@ import SwiftUI
 @main
 struct cat_health_appApp: App {
     let persistenceController = PersistenceController.shared
+    @StateObject var navigationModel = NavigationModel()
 
     var body: some Scene {
         WindowGroup {
             TitleView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(navigationModel) // ← 忘れずに！
         }
     }
 }

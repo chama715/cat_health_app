@@ -9,7 +9,8 @@ import SwiftUI
 
 struct DetailInputView: View {
     let RecordCategory: RecordCategory
-    var onSave: (String) -> Void
+    let recordDate: Date
+    var onSave: (String, Date) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var detailText: String = ""
@@ -25,8 +26,7 @@ struct DetailInputView: View {
         NavigationStack {
             VStack(spacing: 16) {
                 Text("詳細入力：\(RecordCategory.name)")
-                    .font(.title2)
-                    .bold()
+                    .font(.custom("Jiyucho", size: 20))
                 
                 if RecordCategory.name == "うんち" {
                     Picker("状態を選択", selection: $selectedPoop) {
@@ -38,12 +38,12 @@ struct DetailInputView: View {
                     .padding()
 
                     Button("保存") {
-                        onSave(selectedPoop)
+                        onSave(selectedPoop, recordDate)
                         dismiss()
                     }
-                    .frame(maxWidth: .infinity)
+                    .font(.custom("Jiyucho", size: 20))
                     .padding()
-                    .background(Color.softTiffany)
+                    .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
 
@@ -55,12 +55,12 @@ struct DetailInputView: View {
 
                     Button("保存") {
                         let textToSave = gramText.isEmpty ? "" : "\(gramText)g"
-                        onSave(textToSave)
+                        onSave(textToSave, recordDate)
                         dismiss()
                     }
-                    .frame(maxWidth: .infinity)
+                    .font(.custom("Jiyucho", size: 20))
                     .padding()
-                    .background(Color.softTiffany)
+                    .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
 
@@ -74,12 +74,12 @@ struct DetailInputView: View {
                     .padding()
 
                     Button("保存") {
-                        onSave(selectedCondition)
+                        onSave(selectedCondition, recordDate)
                         dismiss()
                     }
-                    .frame(maxWidth: .infinity)
+                    .font(.custom("Jiyucho", size: 20))
                     .padding()
-                    .background(Color.softTiffany)
+                    .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
 
@@ -90,12 +90,12 @@ struct DetailInputView: View {
                         .padding()
 
                     Button("保存") {
-                        onSave(diaryText)
+                        onSave(diaryText, recordDate)
                         dismiss()
                     }
-                    .frame(maxWidth: .infinity)
+                    .font(.custom("Jiyucho", size: 20))
                     .padding()
-                    .background(Color.softTiffany)
+                    .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
 
@@ -105,16 +105,20 @@ struct DetailInputView: View {
                         .padding()
 
                     Button("保存") {
-                        onSave(detailText)
+                        onSave(detailText, recordDate)
                         dismiss()
                     }
-                    .frame(maxWidth: .infinity)
+                    .font(.custom("Jiyucho", size: 20))
                     .padding()
-                    .background(Color.softTiffany)
+                    .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 }
             }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color.white.opacity(0.8))
+            .cornerRadius(10)
             .padding()
             .navigationTitle("詳細入力")
             .navigationBarTitleDisplayMode(.inline)
@@ -127,8 +131,4 @@ struct DetailInputView: View {
             }
         }
     }
-}
-
-#Preview {
-    DetailInputView(RecordCategory: RecordCategory(name: "日記", iconName: "list.clipboard", requiresDetail: true)) { _ in }
 }
