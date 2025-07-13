@@ -43,6 +43,25 @@ class SettingViewModel: ObservableObject {
         print("✅ 全てのデータ（記録・ペット情報）を削除しました")
     }
 
+    func deleteCatAndRecords(catID: UUID) {
+        let recordRequest: NSFetchRequest<NSFetchRequestResult> = RecordEntity.fetchRequest()
+        recordRequest.predicate = NSPredicate(format: "catID == %@", catID as CVarArg)
+        let deleteRecords = NSBatchDeleteRequest(fetchRequest: recordRequest)
+
+        let catRequest: NSFetchRequest<NSFetchRequestResult> = CatEntity.fetchRequest()
+        catRequest.predicate = NSPredicate(format: "id == %@", catID as CVarArg)
+        let deleteCat = NSBatchDeleteRequest(fetchRequest: catRequest)
+
+        do {
+            try context.execute(deleteRecords)
+            try context.execute(deleteCat)
+            try context.save()
+            print("✅ \(catID) の情報と記録を削除しました")
+        } catch {
+            print("❌ 削除に失敗: \(error.localizedDescription)")
+        }
+    }
+
     
 }
 

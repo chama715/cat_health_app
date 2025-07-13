@@ -7,27 +7,44 @@
 
 import Foundation
 import CoreData
+import SwiftUI
 
 @MainActor
 class CalendarViewModel: ObservableObject {
     @Published var selectedDate: Date = Date()
-    @Published var dailyRecord: DailyRecordEntity? = nil
-    
+    @Published var records: [RecordEntity] = []
+
     private let context = PersistenceController.shared.container.viewContext
-    
-    func fetchRecordForSelectedDate() {
-        let fetchRequest: NSFetchRequest<DailyRecordEntity> = DailyRecordEntity.fetchRequest()
 
-        let startOfDay = Calendar.current.startOfDay(for: selectedDate)
-        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
+    @AppStorage("selectedCatID") private var selectedCatID: String = ""
 
-        fetchRequest.predicate = NSPredicate(format: "date >= %@ AND date < %@", startOfDay as NSDate, endOfDay as NSDate)
+    func fetchRecordsForSelectedDate() {
+        guard let catUUID = UUID(uuidString: selectedCatID) else {
+            print("⚠️ 選択されたペットIDが不正です")
+            records = []
+            return
+        }
+
+        // ✅ タイムゾーンを「Asia/Tokyo」に設定したカレンダーを使用
+        var jstCalendar = Calendar.current
+        jstCalendar.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+
+        let startOfDay = jstCalendar.startOfDay(for: selectedDate)
+        let endOfDay = jstCalendar.date(byAdding: .day, value: 1, to: startOfDay)!
+
+        let fetchRequest: NSFetchRequest<RecordEntity> = RecordEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(
+            format: "catID == %@ AND date >= %@ AND date < %@",
+            catUUID as CVarArg, startOfDay as NSDate, endOfDay as NSDate
+        )
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "time", ascending: true)]
 
         do {
-            let result = try context.fetch(fetchRequest)
-            dailyRecord = result.first
+            records = try context.fetch(fetchRequest)
+            print("📅 \(selectedDate) の記録件数: \(records.count)")
         } catch {
-            print("❌ 日付の記録取得に失敗: \(error.localizedDescription)")
+            print("❌ 記録取得に失敗: \(error.localizedDescription)")
+            records = []
         }
     }
 }

@@ -11,20 +11,20 @@ struct MainView: View {
     @EnvironmentObject var navigationModel: NavigationModel
     @StateObject private var viewModel = MainViewModel()
 
-    @State private var showingDetailInput = false
+    @State private var selectedCategory: RecordCategory? = nil
     @State private var selectedCategoryForDetail: RecordCategory? = nil
-    @State private var isCatSelectActive = false
+    @State private var isDetailInputPresented: Bool = false
     @State private var currentDate: Date = Date()
+    @State private var isCatSelectActive = false
     @State private var isSettingActive = false
     @State private var isTitleReturnActive = false
+    @State private var isCalendarActive = false
+
 
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
 
-
-    @FetchRequest(
-        entity: CatEntity.entity(),
-        sortDescriptors: []
-    ) private var allCats: FetchedResults<CatEntity>
+    @FetchRequest(entity: CatEntity.entity(), sortDescriptors: [])
+    private var allCats: FetchedResults<CatEntity>
 
     private var selectedCat: CatEntity? {
         allCats.first(where: { $0.id?.uuidString == selectedCatID })
@@ -32,21 +32,7 @@ struct MainView: View {
 
     var body: some View {
         ZStack {
-            Image("paw_background")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.white.opacity(0.2),
-                    Color.softTiffany.opacity(0.5),
-                    Color.white.opacity(0.2)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            backgroundView
 
             VStack(spacing: 8) {
                 petHeaderView
@@ -62,74 +48,101 @@ struct MainView: View {
                 viewModel.fetchRecords(for: newDate)
             }
 
-            NavigationLink(destination: CatSelectView(), isActive: $isCatSelectActive) {
-                EmptyView()
-            }
-            .hidden()
-
-            NavigationLink(
-                destination: SettingView()
-                    .environmentObject(navigationModel),
-                isActive: $isSettingActive
-            ) {
-                EmptyView()
-            }
-            .hidden()
-
-            NavigationLink(destination: TitleView(), isActive: $isTitleReturnActive) {
-                EmptyView()
-            }
-            .hidden()
+            navigationLinks
         }
-        .sheet(item: $selectedCategoryForDetail) { (category: RecordCategory) in
-            DetailInputView(RecordCategory: category, recordDate: currentDate) { detailText, selectedDate in
+        .sheet(item: $selectedCategoryForDetail) { category in
+            // 現在の日付をローカル変数として固定
+            let dateForSave = currentDate
+
+            DetailInputView(
+                RecordCategory: category,
+                recordDate: dateForSave
+            ) { detailText, selectedDate in
+                print("🐾 保存される selectedDate: \(selectedDate)")
                 viewModel.addRecord(category: category, detail: detailText, for: selectedDate)
+                viewModel.fetchRecords(for: selectedDate)
+                currentDate = selectedDate
             }
         }
+
+
+
+    }
+
+    // MARK: - 背景ビュー
+    private var backgroundView: some View {
+        ZStack {
+            Image("paw_background")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.white.opacity(0.2),
+                    Color.softTiffany.opacity(0.5),
+                    Color.white.opacity(0.2)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+        }
+    }
+
+    // MARK: - ナビゲーションリンク集
+    private var navigationLinks: some View {
+        Group {
+            NavigationLink(destination: CatSelectView(), isActive: $isCatSelectActive) { EmptyView() }
+            NavigationLink(destination: SettingView().environmentObject(navigationModel), isActive: $isSettingActive) { EmptyView() }
+            NavigationLink(destination: TitleView(), isActive: $isTitleReturnActive) { EmptyView() }
+            NavigationLink(destination: CalendarView(), isActive: $isCalendarActive) { EmptyView() }
+        }
+        .hidden()
     }
 
     // MARK: - ペット情報ヘッダー
     private var petHeaderView: some View {
         HStack {
             if let cat = selectedCat {
-                if let imageData = cat.imageData, let uiImage = UIImage(data: imageData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                        .shadow(radius: 3)
-                } else {
-                    Image(systemName: "photo")
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                        .shadow(radius: 3)
-                }
-
-                VStack {
-                    Text(cat.name ?? "名前なし")
-                        .font(.custom("Jiyucho", size: 20))
-                    if let birthDate = cat.birthDate {
-                        Text(calculateAge(from: birthDate))
-                            .font(.custom("Jiyucho", size: 12))
-                    }
-                    Text(cat.breed ?? "猫種不明")
-                        .font(.custom("Jiyucho", size: 12))
-                }
+                catImageView(cat: cat)
+                catInfoView(cat: cat)
             } else {
                 Text("猫が選択されていません")
                     .font(.custom("Jiyucho", size: 20))
             }
 
-            Button(action: {
-                isCatSelectActive = true
-            }) {
+            Button(action: { isCalendarActive = true }) {
                 Image(systemName: "calendar")
                     .font(.system(size: 24))
                     .foregroundColor(.black)
             }
+        }
+    }
+
+    private func catImageView(cat: CatEntity) -> some View {
+        Group {
+            if let imageData = cat.imageData, let uiImage = UIImage(data: imageData) {
+                Image(uiImage: uiImage)
+            } else {
+                Image(systemName: "photo")
+            }
+        }
+        .frame(width: 60, height: 60)
+        .clipShape(Circle())
+        .overlay(Circle().stroke(Color.white, lineWidth: 2))
+        .shadow(radius: 3)
+    }
+
+    private func catInfoView(cat: CatEntity) -> some View {
+        VStack {
+            Text(cat.name ?? "名前なし")
+                .font(.custom("Jiyucho", size: 20))
+            if let birthDate = cat.birthDate {
+                Text(calculateAge(from: birthDate))
+                    .font(.custom("Jiyucho", size: 12))
+            }
+            Text(cat.breed ?? "猫種不明")
+                .font(.custom("Jiyucho", size: 12))
         }
     }
 
@@ -154,59 +167,53 @@ struct MainView: View {
         .padding(.horizontal)
     }
 
-    // MARK: - 中央部タイムライン
+    // MARK: - タイムラインビュー
     private var timelineView: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.white.opacity(0.8))
                 .shadow(radius: 5)
                 .padding(.horizontal)
-                .frame(height: 500)
-                .frame(width: 400)
+                .frame(width: 400, height: 500)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     ForEach(viewModel.records) { record in
-                        HStack(spacing: 12) {
-                            Image(systemName: record.iconName)
-                                .foregroundColor(.softTiffany)
-                            Text(record.time)
-                                .font(.system(size: 18, weight: .bold, design: .monospaced))
-                                .frame(width: 70, alignment: .leading)
-                            Text(record.content)
-                                .font(.system(size: 18))
-                            Spacer()
-                        }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal)
-                        .background(Color.white.opacity(0.6))
-                        .cornerRadius(10)
-                        .padding(.horizontal, 8)
+                        timelineRecordView(record)
                     }
                 }
                 .padding(.vertical)
             }
-            .frame(height: 500)
-            .frame(width: 370)
+            .frame(width: 370, height: 500)
         }
     }
 
-    // MARK: - 下部タイル
+    private func timelineRecordView(_ record: CatRecord) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: record.iconName)
+                .foregroundColor(.softTiffany)
+            Text(record.time)
+                .font(.system(size: 18, weight: .bold, design: .monospaced))
+                .frame(width: 70, alignment: .leading)
+            Text(record.content)
+                .font(.system(size: 18))
+            Spacer()
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal)
+        .background(Color.white.opacity(0.6))
+        .cornerRadius(10)
+        .padding(.horizontal, 8)
+    }
+
+    // MARK: - 下部カテゴリグリッド
     private var categoryGridView: some View {
         let columns = Array(repeating: GridItem(.fixed(50)), count: 6)
 
         return LazyVGrid(columns: columns, spacing: 4) {
             ForEach(viewModel.categories) { category in
                 Button(action: {
-                    if category.name == "猫選択" {
-                        isCatSelectActive = true
-                    } else if category.name == "設定" {
-                        isSettingActive = true
-                    } else if category.requiresDetail {
-                        selectedCategoryForDetail = category
-                    } else {
-                        viewModel.addRecord(category: category, for: currentDate)
-                    }
+                    handleCategoryTap(category)
                 }) {
                     VStack(spacing: 1) {
                         Image(systemName: category.iconName)
@@ -231,6 +238,23 @@ struct MainView: View {
         }
     }
 
+    private func handleCategoryTap(_ category: RecordCategory) {
+        switch category.name {
+        case "猫選択":
+            isCatSelectActive = true
+        case "設定":
+            isSettingActive = true
+        default:
+            if category.requiresDetail {
+                selectedCategory = category
+                isDetailInputPresented = true
+            } else {
+                viewModel.addRecord(category: category, for: currentDate)
+                viewModel.fetchRecords(for: currentDate)
+            }
+        }
+    }
+
     // MARK: - 年齢計算
     private func calculateAge(from birthDate: Date) -> String {
         let calendar = Calendar.current
@@ -239,16 +263,17 @@ struct MainView: View {
         let months = ageComponents.month ?? 0
         return "\(years)歳 \(months)ヶ月"
     }
-}
 
-// MARK: - 日付フォーマット
-private func formattedDate(_ date: Date) -> String {
-    let formatter = DateFormatter()
-    formatter.locale = Locale(identifier: "ja_JP")
-    formatter.dateStyle = .long
-    return formatter.string(from: date)
+    // MARK: - 日付フォーマット
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.dateStyle = .long
+        return formatter.string(from: date)
+    }
 }
 
 #Preview {
     MainView()
 }
+

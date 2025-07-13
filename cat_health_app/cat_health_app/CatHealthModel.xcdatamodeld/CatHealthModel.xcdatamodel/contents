@@ -21,6 +21,7 @@
     </entity>
     <entity name="RecordEntity" representedClassName="RecordEntity" syncable="YES" codeGenerationType="class">
         <attribute name="categoryName" attributeType="String"/>
+        <attribute name="catID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="detail" optional="YES" attributeType="String"/>
         <attribute name="iconName" attributeType="String"/>

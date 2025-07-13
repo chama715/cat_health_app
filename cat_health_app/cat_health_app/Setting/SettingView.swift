@@ -12,7 +12,9 @@ struct SettingView: View {
     @StateObject var viewModel = SettingViewModel()
     @State private var showingDeleteAlert = false
     @State private var isReturnToTitleActive = false
+    @State private var isCatDeleteActive = false
     @EnvironmentObject var navigationModel: NavigationModel
+    
 
     var body: some View {
         ZStack {
@@ -51,7 +53,8 @@ struct SettingView: View {
                         }
 
                         Button("ペットを選んで削除") {
-                            // 未実装
+                            isCatDeleteActive = true
+                            
                         }
                     }
 
@@ -83,6 +86,13 @@ struct SettingView: View {
                 EmptyView()
             }
             .hidden()
+            
+            NavigationLink(destination: CatDeleteView(), isActive: $isCatDeleteActive) {
+                EmptyView()
+            }
+            .hidden()
+
+            
         }
     }
 }

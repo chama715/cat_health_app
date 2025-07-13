@@ -6,41 +6,54 @@
 //
 
 import SwiftUI
-import CoreData
 
 struct CalendarView: View {
     @StateObject private var viewModel = CalendarViewModel()
-    
+    @State private var showTimelineModal = false
+
     var body: some View {
-        VStack(spacing: 20) {
-            DatePicker("日付を選択", selection: $viewModel.selectedDate, displayedComponents: .date)
-                .datePickerStyle(.graphical)
-                .padding()
+        NavigationStack {
+            ZStack {
+                // 背景
+                Image("paw_background")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
 
-            Divider()
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.white.opacity(0.2),
+                        Color.softTiffany.opacity(0.5),
+                        Color.white.opacity(0.2)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
 
-            if let record = viewModel.dailyRecord {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("ごはん：\(record.foodAmount) g")
-                    Text("うんち：\(record.poopStatus ?? "未記録")")
-                    Text("体調：\(record.condition ?? "未記録")")
-                    Text("日記：\(record.memo ?? "未記録")")
+                VStack(spacing: 20) {
+                    Text("カレンダー")
+                        .font(.custom("Jiyucho", size: 28))
+                        .padding(.top, 20)
+
+                    DatePicker("日付を選択", selection: $viewModel.selectedDate, displayedComponents: .date)
+                        .datePickerStyle(.graphical)
+                        .onChange(of: viewModel.selectedDate) { _ in
+                            viewModel.fetchRecordsForSelectedDate()
+                            showTimelineModal = true // ← モーダル表示もここで行う！
+                        }
+                        .padding()
+
+                    Spacer()
                 }
+                .frame(width: 400)
                 .padding()
-            } else {
-                Text("この日の記録はありません")
-                    .foregroundColor(.gray)
-            }
 
-            Spacer()
-        }
-        .navigationTitle("カレンダー")
-        .padding()
-        .onAppear {
-            viewModel.fetchRecordForSelectedDate()
-        }
-        .onChange(of: viewModel.selectedDate) { _ in
-            viewModel.fetchRecordForSelectedDate()
+                // モーダルでタイムライン表示
+                .sheet(isPresented: $showTimelineModal) {
+                    TimelineModalView(records: viewModel.records, selectedDate: viewModel.selectedDate)
+                }
+            }
         }
     }
 }

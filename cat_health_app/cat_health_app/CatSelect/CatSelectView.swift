@@ -12,6 +12,7 @@ struct CatSelectView: View {
     @StateObject private var viewModel: CatSelectViewModel
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
     @State private var isMainViewActive = false
+    @State private var isCatRegisterActive = false  // ← 登録画面用の状態追加
 
     init() {
         let context = PersistenceController.shared.container.viewContext
@@ -38,64 +39,84 @@ struct CatSelectView: View {
                 )
                 .ignoresSafeArea()
 
-                if viewModel.cats.isEmpty {
-                    Text("登録された猫がいません")
-                        .font(.custom("Jiyucho", size: 24))
-                        .padding()
-                } else {
-                    ScrollView {
-                        VStack(spacing: 12) {
-                            ForEach(viewModel.cats, id: \.id) { cat in
-                                HStack {
-                                    if let imageData = cat.imageData,
-                                       let uiImage = UIImage(data: imageData) {
-                                        Image(uiImage: uiImage)
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 50, height: 50)
-                                            .clipShape(Circle())
-                                            .overlay(Circle().stroke(Color.gray, lineWidth: 1))
-                                    } else {
-                                        Image(systemName: "photo")
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 50, height: 50)
-                                            .clipShape(Circle())
-                                            .overlay(Circle().stroke(Color.gray, lineWidth: 1))
-                                    }
+                VStack {
+                    if viewModel.cats.isEmpty {
+                        Text("登録された猫がいません")
+                            .font(.custom("Jiyucho", size: 24))
+                            .padding()
+                    } else {
+                        ScrollView {
+                            VStack(spacing: 12) {
+                                ForEach(viewModel.cats, id: \.id) { cat in
+                                    HStack {
+                                        if let imageData = cat.imageData,
+                                           let uiImage = UIImage(data: imageData) {
+                                            Image(uiImage: uiImage)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 50, height: 50)
+                                                .clipShape(Circle())
+                                                .overlay(Circle().stroke(Color.gray, lineWidth: 1))
+                                        } else {
+                                            Image(systemName: "photo")
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 50, height: 50)
+                                                .clipShape(Circle())
+                                                .overlay(Circle().stroke(Color.gray, lineWidth: 1))
+                                        }
 
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(cat.name ?? "名前なし")
-                                            .font(.custom("Jiyucho", size: 20))
-                                            .foregroundColor(.black)
-                                        Text(cat.breed ?? "猫種不明")
-                                            .font(.custom("Jiyucho", size: 12))
-                                            .foregroundColor(.black)
-                                        if let birthDate = cat.birthDate {
-                                            Text("年齢: \(viewModel.calculateAgeText(from: birthDate))")
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(cat.name ?? "名前なし")
+                                                .font(.custom("Jiyucho", size: 20))
+                                                .foregroundColor(.black)
+                                            Text(cat.breed ?? "猫種不明")
                                                 .font(.custom("Jiyucho", size: 12))
                                                 .foregroundColor(.black)
+                                            if let birthDate = cat.birthDate {
+                                                Text("年齢: \(viewModel.calculateAgeText(from: birthDate))")
+                                                    .font(.custom("Jiyucho", size: 12))
+                                                    .foregroundColor(.black)
+                                            }
                                         }
+                                        Spacer()
                                     }
-                                    Spacer()
-                                }
-                                .frame(width: 300)
-                                .padding()
-                                .background(Color.white.opacity(0.8))
-                                .cornerRadius(12)
-                                .onTapGesture {
-                                    viewModel.selectCat(cat)
-                                    if let id = cat.id?.uuidString {
-                                        selectedCatID = id
-                                        isMainViewActive = true
+                                    .frame(width: 300)
+                                    .padding()
+                                    .background(Color.white.opacity(0.8))
+                                    .cornerRadius(12)
+                                    .onTapGesture {
+                                        viewModel.selectCat(cat)
+                                        if let id = cat.id?.uuidString {
+                                            selectedCatID = id
+                                            isMainViewActive = true
+                                        }
                                     }
                                 }
                             }
+                            .padding()
                         }
-                        .padding()
                     }
+
+                    // 🔹 ペット登録ボタン
+                    NavigationLink(destination: CatRegisterView(), isActive: $isCatRegisterActive) {
+                        Button(action: {
+                            isCatRegisterActive = true
+                        }) {
+                            Text("＋ ペットを登録する")
+                                .font(.custom("Jiyucho", size: 20))
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(width: 240)
+                                .background(Color.blue)
+                                .cornerRadius(12)
+                                .shadow(radius: 3)
+                        }
+                    }
+                    .padding(.bottom, 20)
                 }
 
+                // 🔹 メイン画面への遷移リンク
                 NavigationLink(destination: MainView(), isActive: $isMainViewActive) {
                     EmptyView()
                 }
