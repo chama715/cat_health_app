@@ -15,8 +15,22 @@ class CalendarViewModel: ObservableObject {
     @Published var records: [RecordEntity] = []
 
     private let context = PersistenceController.shared.container.viewContext
-
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
+
+    // ✅ JST固定カレンダー（これがないとUTCになる！）
+    private var calendar: Calendar {
+        var cal = Calendar.current
+        cal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+        return cal
+    }
+
+    // ✅ JSTログ出力用のフォーマッタ
+    private func formatJST(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
+        return formatter.string(from: date)
+    }
 
     func fetchRecordsForSelectedDate() {
         guard let catUUID = UUID(uuidString: selectedCatID) else {
@@ -25,12 +39,11 @@ class CalendarViewModel: ObservableObject {
             return
         }
 
-        // ✅ タイムゾーンを「Asia/Tokyo」に設定したカレンダーを使用
-        var jstCalendar = Calendar.current
-        jstCalendar.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+        let startOfDay = calendar.startOfDay(for: selectedDate)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
 
-        let startOfDay = jstCalendar.startOfDay(for: selectedDate)
-        let endOfDay = jstCalendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        // ✅ JST形式でログ出力
+        print("🔍 検索範囲: \(formatJST(startOfDay)) 〜 \(formatJST(endOfDay))")
 
         let fetchRequest: NSFetchRequest<RecordEntity> = RecordEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(
@@ -41,7 +54,7 @@ class CalendarViewModel: ObservableObject {
 
         do {
             records = try context.fetch(fetchRequest)
-            print("📅 \(selectedDate) の記録件数: \(records.count)")
+            print("📅 \(formatJST(selectedDate)) の記録件数: \(records.count)")
         } catch {
             print("❌ 記録取得に失敗: \(error.localizedDescription)")
             records = []

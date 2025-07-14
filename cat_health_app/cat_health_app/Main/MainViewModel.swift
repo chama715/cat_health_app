@@ -51,7 +51,8 @@ class MainViewModel: ObservableObject {
             return
         }
 
-        print("🔍 検索範囲: \(startOfDay) 〜 \(endOfDay)")
+        // ✅ JST表示に修正
+        print("🔍 検索範囲: \(formatJST(startOfDay)) 〜 \(formatJST(endOfDay))")
 
         let request: NSFetchRequest<RecordEntity> = RecordEntity.fetchRequest()
         request.predicate = NSPredicate(
@@ -86,7 +87,8 @@ class MainViewModel: ObservableObject {
         let recordDate = calendar.startOfDay(for: date)
         let recordTime = Date()
 
-        print("📝 保存される日付: \(recordDate)")
+        // ✅ JST表示に修正
+        print("📝 保存される日付: \(formatJST(recordDate))")
 
         let entity = RecordEntity(context: context)
         entity.date = recordDate
@@ -107,7 +109,6 @@ class MainViewModel: ObservableObject {
         }
     }
 
-    // ✅ currentDateを外から渡す形に変更（MainView側から渡す想定）
     func addRecord(category: RecordCategory, for date: Date) {
         addRecord(category: category, detail: "", for: date)
     }
@@ -135,6 +136,14 @@ class MainViewModel: ObservableObject {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: date)
+    }
+
+    // ✅ JSTのログ出力用
+    private func formatJST(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
         return formatter.string(from: date)
     }
 
