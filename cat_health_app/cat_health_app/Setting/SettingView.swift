@@ -40,6 +40,35 @@ struct SettingView: View {
                     .padding(.top, 40)
 
                 List {
+                    Section(header: Text("アプリ情報")) {
+                        NavigationLink(destination: DeveloperMessageView()) {
+                                              Text("開発者からのメッセージ")
+                                                  .font(.custom("Jiyucho", size: 20))
+                                                  .foregroundColor(.white)
+                                                  .padding()
+                                                  .frame(width: 300)
+                                                  .background(Color.blue.opacity(0.6))
+                                                  .cornerRadius(8)
+                                          }
+
+                        NavigationLink(destination: HelpPageView()) {
+                                               Text("使い方ガイド")
+                                                   .font(.custom("Jiyucho", size: 20))
+                                                   .foregroundColor(.white)
+                                                   .padding()
+                                                   .frame(width: 300)
+                                                   .background(Color.blue.opacity(0.6))
+                                                   .cornerRadius(8)
+                                           }
+                        
+                        HStack {
+                            Text("バージョン")
+                            Spacer()
+                            Text("1.0.0")
+                        }
+                        
+                    }
+                    
                     Section(header: Text("データ管理")) {
                         Button("全てのデータを削除") {
                             showingDeleteAlert = true
@@ -57,22 +86,7 @@ struct SettingView: View {
                             
                         }
                     }
-
-                    Section(header: Text("アプリ情報")) {
-                        HStack {
-                            Text("バージョン")
-                            Spacer()
-                            Text("1.0.0")
-                        }
-
-                        Button("開発者からのメッセージ") {
-                            // 未実装
-                        }
-
-                        Button("アプリの使い方") {
-                            // 未実装
-                        }
-                    }
+                    
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color.white.opacity(0.7))

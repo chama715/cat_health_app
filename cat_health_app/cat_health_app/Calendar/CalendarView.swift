@@ -14,7 +14,6 @@ struct CalendarView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // 背景
                 Image("paw_background")
                     .resizable()
                     .scaledToFill()
@@ -49,7 +48,6 @@ struct CalendarView: View {
                 .frame(width: 400)
                 .padding()
 
-                // モーダルでタイムライン表示
                 .sheet(isPresented: $showTimelineModal) {
                     TimelineModalView(records: viewModel.records, selectedDate: viewModel.selectedDate)
                 }

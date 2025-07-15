@@ -11,15 +11,12 @@ struct MainView: View {
     @EnvironmentObject var navigationModel: NavigationModel
     @StateObject private var viewModel = MainViewModel()
 
-    @State private var selectedCategory: RecordCategory? = nil
     @State private var selectedCategoryForDetail: RecordCategory? = nil
-    @State private var isDetailInputPresented: Bool = false
     @State private var currentDate: Date = Date()
     @State private var isCatSelectActive = false
     @State private var isSettingActive = false
     @State private var isTitleReturnActive = false
     @State private var isCalendarActive = false
-
 
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
 
@@ -51,7 +48,6 @@ struct MainView: View {
             navigationLinks
         }
         .sheet(item: $selectedCategoryForDetail) { category in
-            // 現在の日付をローカル変数として固定
             let dateForSave = currentDate
 
             DetailInputView(
@@ -64,12 +60,8 @@ struct MainView: View {
                 currentDate = selectedDate
             }
         }
-
-
-
     }
 
-    // MARK: - 背景ビュー
     private var backgroundView: some View {
         ZStack {
             Image("paw_background")
@@ -89,7 +81,6 @@ struct MainView: View {
         }
     }
 
-    // MARK: - ナビゲーションリンク集
     private var navigationLinks: some View {
         Group {
             NavigationLink(destination: CatSelectView(), isActive: $isCatSelectActive) { EmptyView() }
@@ -100,7 +91,6 @@ struct MainView: View {
         .hidden()
     }
 
-    // MARK: - ペット情報ヘッダー
     private var petHeaderView: some View {
         HStack {
             if let cat = selectedCat {
@@ -123,6 +113,12 @@ struct MainView: View {
         Group {
             if let imageData = cat.imageData, let uiImage = UIImage(data: imageData) {
                 Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 60, height: 60)
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                    .shadow(radius: 3)
             } else {
                 Image(systemName: "photo")
             }
@@ -146,7 +142,6 @@ struct MainView: View {
         }
     }
 
-    // MARK: - 日付表示と切り替えボタン
     private var dateNavigationView: some View {
         HStack {
             Button(action: {
@@ -167,7 +162,6 @@ struct MainView: View {
         .padding(.horizontal)
     }
 
-    // MARK: - タイムラインビュー
     private var timelineView: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
@@ -206,7 +200,6 @@ struct MainView: View {
         .padding(.horizontal, 8)
     }
 
-    // MARK: - 下部カテゴリグリッド
     private var categoryGridView: some View {
         let columns = Array(repeating: GridItem(.fixed(50)), count: 6)
 
@@ -246,8 +239,7 @@ struct MainView: View {
             isSettingActive = true
         default:
             if category.requiresDetail {
-                selectedCategory = category
-                isDetailInputPresented = true
+                selectedCategoryForDetail = category  // ← ここが修正ポイント！
             } else {
                 viewModel.addRecord(category: category, for: currentDate)
                 viewModel.fetchRecords(for: currentDate)
@@ -255,7 +247,6 @@ struct MainView: View {
         }
     }
 
-    // MARK: - 年齢計算
     private func calculateAge(from birthDate: Date) -> String {
         let calendar = Calendar.current
         let ageComponents = calendar.dateComponents([.year, .month], from: birthDate, to: Date())
@@ -264,7 +255,6 @@ struct MainView: View {
         return "\(years)歳 \(months)ヶ月"
     }
 
-    // MARK: - 日付フォーマット
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP")
@@ -272,8 +262,3 @@ struct MainView: View {
         return formatter.string(from: date)
     }
 }
-
-#Preview {
-    MainView()
-}
-

@@ -5,35 +5,34 @@
 //  Created by 高橋直斗 on 2025/07/09.
 //
 
-/*
- Viewのロジック系をこっちに。
- 登録する項目の状態を定義。
- 英語っぽい生年月日を日本風に変える変数。
- 登録ボタンを押した時に呼ばれる関数。
- 生年月日の年、月を増やしたり減らしたりするのは別にしてUX向上。
- */
-
 import SwiftUI
 import PhotosUI
 import CoreData
 
 class CatRegisterViewModel: ObservableObject {
+    // MARK: - 猫の情報を登録するための状態
+    // 猫の名前
     @Published var catName: String = ""
+    // 猫の性別
     @Published var gender: String = "オス"
+    // 猫の種類
     @Published var breed: String = ""
+    // 猫の生年月日
     @Published var birthDate: Date = Date()
+    // 猫の写真
     @Published var selectedPhoto: PhotosPickerItem?
+    // 猫の写真(表示用)
     @Published var selectedImage: Image?
-
+    // 性別の選択肢
     let genders = ["オス", "メス"]
-    
+    // 生年月日を日本風に変更するためのフォーマット
     var birthDateFormatted: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP")
         formatter.dateStyle = .long
         return formatter.string(from: birthDate)
     }
-    
+    // MARK: - 年齢計算の関数
     func calculateAgeComponents() -> DateComponents {
         let calendar = Calendar.current
         let now = Date()
@@ -48,7 +47,7 @@ class CatRegisterViewModel: ObservableObject {
     var ageMonthsText: Int {
         calculateAgeComponents().month ?? 0
     }
-
+    // MARK: - 非同期での写真の読み込みの処理
     func loadImageFromPicker() async {
         guard let selectedPhoto else { return }
         if let data = try? await selectedPhoto.loadTransferable(type: Data.self),
@@ -58,7 +57,7 @@ class CatRegisterViewModel: ObservableObject {
             }
         }
     }
-
+    // MARK: - CoreDataへの保存の処理
     @MainActor
     func saveCat(context: NSManagedObjectContext) {
         let newCat = CatEntity(context: context)
@@ -67,8 +66,8 @@ class CatRegisterViewModel: ObservableObject {
         newCat.gender = gender
         newCat.breed = breed
         newCat.birthDate = birthDate
-        
-        // 画像データ変換
+
+        // MARK: - 画像を保存する処理
         if let selectedImage = selectedImage {
             let renderer = ImageRenderer(content: selectedImage)
             if let uiImage = renderer.uiImage,

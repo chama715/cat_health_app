@@ -5,18 +5,6 @@
 //  Created by 高橋直斗 on 2025/07/09.
 //
 
-/*
- ペット登録画面。
- 背景や色はタイトル画面と同じで、フォントもじゆうちょうフォントを採用。
- スクロールビューで入力欄を。
- 名前は自由に入力できる。
- 性別はオスかメスかをピッカーで選択。
- 猫種は名前と同様、入力できるように。
- 生年月日を入力すれば年齢が出る仕様に。
- 写真はカメラロールから保存できるように。
- ボタンを押すと情報が保存されるように。
- */
-
 import SwiftUI
 import PhotosUI
 
@@ -28,6 +16,7 @@ struct CatRegisterView: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                // 背景
                 Image("paw_background")
                     .resizable()
                     .scaledToFill()
@@ -51,12 +40,14 @@ struct CatRegisterView: View {
                             .padding(.bottom)
 
                         Group {
+                            // ペットの名前を登録。viewModelのcatNameとバインディング。
                             Text("名前")
                                 .font(.custom("Jiyucho", size: 20))
                             TextField("例: たま", text: $viewModel.catName)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .frame(width: 400)
 
+                            // ペットの性別を登録。viewModelのgenderとバインディング。
                             Text("性別")
                                 .font(.custom("Jiyucho", size: 20))
                             Picker("性別", selection: $viewModel.gender) {
@@ -66,30 +57,32 @@ struct CatRegisterView: View {
                             }
                             .pickerStyle(SegmentedPickerStyle())
                             .frame(width: 400)
-
+                            
+                            // ペットの種類を登録。viewModelのbreedとバインディング。
                             Text("猫種")
                                 .font(.custom("Jiyucho", size: 20))
                             TextField("例: スコティッシュフォールド", text: $viewModel.breed)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .frame(width: 400)
-
+                            
+                            // ペットの生年月日を登録。viewModelのbirthDateとバインディング。
+                            // viewModelのプロパティを通じて、生年月日から年齢を表示。
                             Text("生年月日")
                                 .font(.custom("Jiyucho", size: 20))
                             DatePicker("", selection: $viewModel.birthDate, displayedComponents: .date)
                                 .datePickerStyle(.compact)
                                 .frame(width: 100)
-
                             Text("生年月日: \(viewModel.birthDateFormatted)")
                                 .font(.custom("Jiyucho", size: 20))
-
                             Text("年齢: \(viewModel.ageYearsText) 歳 \(viewModel.ageMonthsText) ヶ月")
                                 .font(.custom("Jiyucho", size: 20))
                                 .padding(.top)
                         }
-
+                        
+                        // 写真の設定。
+                        // 写真アプリから猫の写真を選択。
                         Text("写真")
                             .font(.custom("Jiyucho", size: 20))
-
                         PhotosPicker(selection: $viewModel.selectedPhoto, matching: .images) {
                             if let selectedImage = viewModel.selectedImage {
                                 selectedImage
@@ -112,7 +105,8 @@ struct CatRegisterView: View {
                             }
                         }
                         .frame(width: 400)
-
+                        
+                        // ペット選択への画面遷移。同時にペット情報を保存。
                         Button(action: {
                             viewModel.saveCat(context: context)
                             isCatSelectActive = true
@@ -137,8 +131,4 @@ struct CatRegisterView: View {
             }
         }
     }
-}
-
-#Preview {
-    CatRegisterView()
 }

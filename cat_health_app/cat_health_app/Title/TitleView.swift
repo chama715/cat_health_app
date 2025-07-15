@@ -5,27 +5,20 @@
 //  Created by 高橋直斗 on 2025/07/09.
 //
 
-/*
- タイトル画面。
- 今回は文字はカスタム文字を採用。
- ボタンを2つ配置し、今回は簡単なナビゲーションリンクで。
- */
-
-
 import SwiftUI
 
 struct TitleView: View {
     @EnvironmentObject var navigationModel: NavigationModel
-
+    
     var body: some View {
         NavigationStack(path: $navigationModel.path) {
             ZStack {
-                // 背景画像とグラデーション
+                // 背景
                 Image("paw_background")
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
-
+                
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color.white.opacity(0.2),
@@ -36,17 +29,16 @@ struct TitleView: View {
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
-
-                // 中央のテキスト＆ボタン
+                
                 VStack {
                     Spacer()
-
+                    // タイトル
                     Text("ねこ手帳")
                         .font(.custom("Jiyucho", size: 50))
-
+                    
                     Spacer()
-
-                    // ペット選択へ
+                    
+                    // 猫選択への画面遷移
                     NavigationLink(destination: CatSelectView()) {
                         Text("ペット選択へ")
                             .font(.custom("Jiyucho", size: 32))
@@ -63,8 +55,8 @@ struct TitleView: View {
                             .shadow(color: .gray.opacity(0.5), radius: 4, x: 0, y: 4)
                     }
                     .padding()
-
-                    // ペット登録へ
+                    
+                    // ペット登録への画面遷移
                     NavigationLink(destination: CatRegisterView()) {
                         Text("ペット登録へ")
                             .font(.custom("Jiyucho", size: 32))
@@ -81,15 +73,10 @@ struct TitleView: View {
                             .shadow(color: .gray.opacity(0.5), radius: 4, x: 0, y: 4)
                     }
                     .padding()
-
+                    
                     Spacer()
                 }
             }
         }
     }
-}
-
-#Preview {
-    TitleView()
-        .environmentObject(NavigationModel())
 }

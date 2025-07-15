@@ -16,7 +16,7 @@ struct cat_health_appApp: App {
         WindowGroup {
             TitleView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(navigationModel) // ← 忘れずに！
+                .environmentObject(navigationModel)
         }
     }
 }

@@ -18,9 +18,9 @@ struct DetailInputView: View {
     @State private var gramText: String = ""
     @State private var selectedCondition = "普通"
     @State private var diaryText: String = ""
+    @State private var weightText: String = ""
 
     let poopOptions = ["硬め", "普通", "柔らかめ", "下痢"]
-    let conditionOptions = ["良い", "普通", "悪い"]
 
     var body: some View {
         NavigationStack {
@@ -64,17 +64,19 @@ struct DetailInputView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
 
-                } else if RecordCategory.name == "体調" {
-                    Picker("体調を選択", selection: $selectedCondition) {
-                        ForEach(conditionOptions, id: \.self) { option in
-                            Text(option)
-                        }
-                    }
-                    .pickerStyle(.wheel)
-                    .padding()
+                } else if RecordCategory.name == "体重" {
+                    TextField("体重を入力（例: 4.2）", text: $weightText)
+                        .keyboardType(.decimalPad)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+
+                    Text("単位：kg")
+                        .font(.custom("Jiyucho", size: 14))
+                        .foregroundColor(.gray)
 
                     Button("保存") {
-                        onSave(selectedCondition, recordDate)
+                        let textToSave = weightText.isEmpty ? "" : weightText
+                        onSave(textToSave, recordDate)
                         dismiss()
                     }
                     .font(.custom("Jiyucho", size: 20))

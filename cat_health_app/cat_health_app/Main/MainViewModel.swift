@@ -20,7 +20,7 @@ class MainViewModel: ObservableObject {
         RecordCategory(name: "水", iconName: "waterbottle", requiresDetail: false),
         RecordCategory(name: "つめきり", iconName: "scissors", requiresDetail: false),
         RecordCategory(name: "ブラシ", iconName: "paintbrush", requiresDetail: false),
-        RecordCategory(name: "体調", iconName: "stethoscope", requiresDetail: true),
+        RecordCategory(name: "体重", iconName: "scalemass", requiresDetail: true),
         RecordCategory(name: "くすり", iconName: "pills", requiresDetail: false),
         RecordCategory(name: "日記", iconName: "list.clipboard", requiresDetail: true),
         RecordCategory(name: "猫選択", iconName: "pawprint.circle", requiresDetail: true),
@@ -30,14 +30,12 @@ class MainViewModel: ObservableObject {
     private let context = PersistenceController.shared.container.viewContext
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
 
-    // ✅ JST固定カレンダー
     private var calendar: Calendar {
         var cal = Calendar.current
         cal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         return cal
     }
 
-    // MARK: - Fetch Records
     func fetchRecords(for date: Date) {
         guard let catUUID = UUID(uuidString: selectedCatID) else {
             print("⚠️ selectedCatIDが不正です")
@@ -51,7 +49,6 @@ class MainViewModel: ObservableObject {
             return
         }
 
-        // ✅ JST表示に修正
         print("🔍 検索範囲: \(formatJST(startOfDay)) 〜 \(formatJST(endOfDay))")
 
         let request: NSFetchRequest<RecordEntity> = RecordEntity.fetchRequest()
@@ -77,7 +74,6 @@ class MainViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Add Record
     func addRecord(category: RecordCategory, detail: String = "", for date: Date) {
         guard let uuid = UUID(uuidString: selectedCatID) else {
             print("⚠️ selectedCatIDが不正 or 未設定")
@@ -87,7 +83,6 @@ class MainViewModel: ObservableObject {
         let recordDate = calendar.startOfDay(for: date)
         let recordTime = Date()
 
-        // ✅ JST表示に修正
         print("📝 保存される日付: \(formatJST(recordDate))")
 
         let entity = RecordEntity(context: context)
@@ -113,10 +108,12 @@ class MainViewModel: ObservableObject {
         addRecord(category: category, detail: "", for: date)
     }
 
-    // MARK: - 表示フォーマット系
     private func formatContent(name: String, detail: String?) -> String {
         if name == "日記" {
             return "日記"
+        }
+        if name == "体重", let detail = detail, !detail.isEmpty {
+            return "体重 \(detail)kg"
         }
         if let detail = detail, !detail.isEmpty {
             return "\(name) \(detail)"
@@ -139,7 +136,6 @@ class MainViewModel: ObservableObject {
         return formatter.string(from: date)
     }
 
-    // ✅ JSTのログ出力用
     private func formatJST(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
@@ -147,7 +143,6 @@ class MainViewModel: ObservableObject {
         return formatter.string(from: date)
     }
 
-    // MARK: - 古い記録の削除
     func deleteOldRecords(olderThan days: Int) {
         let cutoffDate = calendar.date(byAdding: .day, value: -days, to: Date())!
 

@@ -69,19 +69,17 @@ struct TimelineModalView: View {
         }
     }
 
-    // 🕙 日本時間で日付表示
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")! // ← 追加
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         formatter.locale = Locale(identifier: "ja_JP")
         formatter.dateStyle = .long
         return formatter.string(from: date)
     }
 
-    // 🕐 日本時間で時刻表示
     private func timeFormatter(date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")! // ← 追加
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
     }

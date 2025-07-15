@@ -17,14 +17,12 @@ class CalendarViewModel: ObservableObject {
     private let context = PersistenceController.shared.container.viewContext
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
 
-    // ✅ JST固定カレンダー（これがないとUTCになる！）
     private var calendar: Calendar {
         var cal = Calendar.current
         cal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         return cal
     }
 
-    // ✅ JSTログ出力用のフォーマッタ
     private func formatJST(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
@@ -42,7 +40,6 @@ class CalendarViewModel: ObservableObject {
         let startOfDay = calendar.startOfDay(for: selectedDate)
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
 
-        // ✅ JST形式でログ出力
         print("🔍 検索範囲: \(formatJST(startOfDay)) 〜 \(formatJST(endOfDay))")
 
         let fetchRequest: NSFetchRequest<RecordEntity> = RecordEntity.fetchRequest()
