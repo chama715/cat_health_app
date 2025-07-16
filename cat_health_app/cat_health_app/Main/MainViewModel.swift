@@ -10,8 +10,10 @@ import CoreData
 import SwiftUI
 
 class MainViewModel: ObservableObject {
+    // 表示する記録を格納しておく状態
     @Published var records: [CatRecord] = []
-
+    
+    // 下部に並ぶタイルのそれぞれの定義（詳細情報の入力が必要なものはtrue）
     let categories: [RecordCategory] = [
         RecordCategory(name: "おしっこ", iconName: "toilet", requiresDetail: false),
         RecordCategory(name: "うんち", iconName: "toilet.fill", requiresDetail: true),
@@ -26,38 +28,40 @@ class MainViewModel: ObservableObject {
         RecordCategory(name: "猫選択", iconName: "pawprint.circle", requiresDetail: true),
         RecordCategory(name: "設定", iconName: "gearshape", requiresDetail: true),
     ]
-
+    
     private let context = PersistenceController.shared.container.viewContext
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
-
+    
+    // 日本用のカレンダーに変換（アメリカ時間にならないため）
     private var calendar: Calendar {
         var cal = Calendar.current
         cal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         return cal
     }
-
+    
+    // 猫データを取得してViewに表示させるための関数
     func fetchRecords(for date: Date) {
         guard let catUUID = UUID(uuidString: selectedCatID) else {
             print("⚠️ selectedCatIDが不正です")
             records = []
             return
         }
-
+        
         let startOfDay = calendar.startOfDay(for: date)
         guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
             records = []
             return
         }
-
+        
         print("🔍 検索範囲: \(formatJST(startOfDay)) 〜 \(formatJST(endOfDay))")
-
+        
         let request: NSFetchRequest<RecordEntity> = RecordEntity.fetchRequest()
         request.predicate = NSPredicate(
             format: "catID == %@ AND date >= %@ AND date < %@",
             catUUID as CVarArg, startOfDay as NSDate, endOfDay as NSDate
         )
         request.sortDescriptors = [NSSortDescriptor(key: "time", ascending: true)]
-
+        
         do {
             let entities = try context.fetch(request)
             print("📥 \(formatted(date: startOfDay)) の記録件数: \(entities.count)")
@@ -73,18 +77,19 @@ class MainViewModel: ObservableObject {
             records = []
         }
     }
-
+    
+    // CoreDataに保存する処理
     func addRecord(category: RecordCategory, detail: String = "", for date: Date) {
         guard let uuid = UUID(uuidString: selectedCatID) else {
             print("⚠️ selectedCatIDが不正 or 未設定")
             return
         }
-
+        
         let recordDate = calendar.startOfDay(for: date)
         let recordTime = Date()
-
+        
         print("📝 保存される日付: \(formatJST(recordDate))")
-
+        
         let entity = RecordEntity(context: context)
         entity.date = recordDate
         entity.time = recordTime
@@ -92,9 +97,9 @@ class MainViewModel: ObservableObject {
         entity.iconName = category.iconName
         entity.detail = detail
         entity.setValue(uuid, forKey: "catID")
-
+        
         print("🐾 保存: \(category.name) \(detail) @ \(formatted(date: recordDate))")
-
+        
         do {
             try context.save()
             deleteOldRecords(olderThan: 365)
@@ -103,11 +108,13 @@ class MainViewModel: ObservableObject {
             print("❌ 記録の保存に失敗: \(error.localizedDescription)")
         }
     }
-
+    
+    // CoreDataに保存する処理
     func addRecord(category: RecordCategory, for date: Date) {
         addRecord(category: category, detail: "", for: date)
     }
-
+    
+    // タイムラインに表示するテキストの処理
     private func formatContent(name: String, detail: String?) -> String {
         if name == "日記" {
             return "日記"
@@ -121,35 +128,39 @@ class MainViewModel: ObservableObject {
             return name
         }
     }
-
+    
+    // 時間の表示を変更
     private func timeFormatter(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
     }
-
+    
+    // 年月日の表示を変更
     private func formatted(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.string(from: date)
     }
-
+    
+    // ログ出力などで正確な日時を表示するための処理
     private func formatJST(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
         return formatter.string(from: date)
     }
-
+    
+    // 1年以上前のデータを削除する処理
     func deleteOldRecords(olderThan days: Int) {
         let cutoffDate = calendar.date(byAdding: .day, value: -days, to: Date())!
-
+        
         let request: NSFetchRequest<NSFetchRequestResult> = RecordEntity.fetchRequest()
         request.predicate = NSPredicate(format: "date < %@", cutoffDate as NSDate)
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
-
+        
         do {
             try context.execute(deleteRequest)
             try context.save()

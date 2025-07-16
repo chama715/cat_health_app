@@ -11,7 +11,6 @@ struct DetailInputView: View {
     let RecordCategory: RecordCategory
     let recordDate: Date
     var onSave: (String, Date) -> Void
-
     @Environment(\.dismiss) private var dismiss
     @State private var detailText: String = ""
     @State private var selectedPoop = "普通"
@@ -19,15 +18,17 @@ struct DetailInputView: View {
     @State private var selectedCondition = "普通"
     @State private var diaryText: String = ""
     @State private var weightText: String = ""
-
+    
     let poopOptions = ["硬め", "普通", "柔らかめ", "下痢"]
-
+    
     var body: some View {
         NavigationStack {
+            // 詳細入力のモーダル
             VStack(spacing: 16) {
                 Text("詳細入力：\(RecordCategory.name)")
                     .font(.custom("Jiyucho", size: 20))
                 
+                // うんちの場合
                 if RecordCategory.name == "うんち" {
                     Picker("状態を選択", selection: $selectedPoop) {
                         ForEach(poopOptions, id: \.self) { option in
@@ -36,7 +37,7 @@ struct DetailInputView: View {
                     }
                     .pickerStyle(.wheel)
                     .padding()
-
+                    
                     Button("保存") {
                         onSave(selectedPoop, recordDate)
                         dismiss()
@@ -46,13 +47,14 @@ struct DetailInputView: View {
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-
+                    
+                    // ごはんの場合
                 } else if RecordCategory.name == "ごはん" {
                     TextField("g数を入力（任意）", text: $gramText)
                         .keyboardType(.numberPad)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
-
+                    
                     Button("保存") {
                         let textToSave = gramText.isEmpty ? "" : "\(gramText)g"
                         onSave(textToSave, recordDate)
@@ -63,17 +65,18 @@ struct DetailInputView: View {
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-
+                    
+                    // 体重の場合
                 } else if RecordCategory.name == "体重" {
                     TextField("体重を入力（例: 4.2）", text: $weightText)
                         .keyboardType(.decimalPad)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
-
+                    
                     Text("単位：kg")
                         .font(.custom("Jiyucho", size: 14))
                         .foregroundColor(.gray)
-
+                    
                     Button("保存") {
                         let textToSave = weightText.isEmpty ? "" : weightText
                         onSave(textToSave, recordDate)
@@ -84,13 +87,14 @@ struct DetailInputView: View {
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-
+                    
+                    // 日記の場合
                 } else if RecordCategory.name == "日記" {
                     TextEditor(text: $diaryText)
                         .frame(height: 200)
                         .border(Color.gray.opacity(0.5), width: 1)
                         .padding()
-
+                    
                     Button("保存") {
                         onSave(diaryText, recordDate)
                         dismiss()
@@ -100,12 +104,13 @@ struct DetailInputView: View {
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-
+                    
                 } else {
+                    // その他
                     TextField("詳細を入力", text: $detailText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
-
+                    
                     Button("保存") {
                         onSave(detailText, recordDate)
                         dismiss()
@@ -122,6 +127,8 @@ struct DetailInputView: View {
             .background(Color.white.opacity(0.8))
             .cornerRadius(10)
             .padding()
+            
+            // ナビゲーションバーのタイトル
             .navigationTitle("詳細入力")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

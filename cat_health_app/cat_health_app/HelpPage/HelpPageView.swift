@@ -10,7 +10,6 @@ import SwiftUI
 struct HelpPageView: View {
     
     @Environment(\.dismiss) var dismiss
-
     
     var body: some View {
         ZStack {
@@ -18,7 +17,7 @@ struct HelpPageView: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-
+            
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color.white.opacity(0.2),
@@ -29,11 +28,11 @@ struct HelpPageView: View {
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
-
+            
             VStack(spacing: 20) {
                 Text("使い方ガイド")
                     .font(.custom("Jiyucho", size: 40))
-
+                
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("メイン画面")
@@ -56,17 +55,18 @@ struct HelpPageView: View {
                     .padding()
                 }
                 
+                // 設定画面に遷移
                 Button(action: {
                     dismiss()
                 }) {
                     Text("← 設定画面に戻る")
                         .font(.custom("Jiyucho", size: 20))
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue.opacity(0.7))
-                                .cornerRadius(10)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.blue.opacity(0.7))
+                        .cornerRadius(10)
                 }
-
+                
                 
             }
             .frame(width: 400)

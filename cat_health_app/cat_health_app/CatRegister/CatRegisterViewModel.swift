@@ -39,11 +39,11 @@ class CatRegisterViewModel: ObservableObject {
         let ageComponents = calendar.dateComponents([.year, .month], from: birthDate, to: now)
         return ageComponents
     }
-
+    
     var ageYearsText: Int {
         calculateAgeComponents().year ?? 0
     }
-
+    
     var ageMonthsText: Int {
         calculateAgeComponents().month ?? 0
     }
@@ -66,7 +66,7 @@ class CatRegisterViewModel: ObservableObject {
         newCat.gender = gender
         newCat.breed = breed
         newCat.birthDate = birthDate
-
+        
         // MARK: - 画像を保存する処理
         if let selectedImage = selectedImage {
             let renderer = ImageRenderer(content: selectedImage)

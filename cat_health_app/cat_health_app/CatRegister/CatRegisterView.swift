@@ -12,7 +12,7 @@ struct CatRegisterView: View {
     @StateObject private var viewModel = CatRegisterViewModel()
     @Environment(\.managedObjectContext) private var context
     @State private var isCatSelectActive = false
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -21,7 +21,7 @@ struct CatRegisterView: View {
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
-
+                
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color.white.opacity(0.2),
@@ -32,13 +32,13 @@ struct CatRegisterView: View {
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
-
+                
                 ScrollView {
                     VStack(spacing: 20) {
                         Text("新しいペットを登録する")
                             .font(.custom("Jiyucho", size: 24))
                             .padding(.bottom)
-
+                        
                         Group {
                             // ペットの名前を登録。viewModelのcatNameとバインディング。
                             Text("名前")
@@ -46,7 +46,7 @@ struct CatRegisterView: View {
                             TextField("例: たま", text: $viewModel.catName)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .frame(width: 400)
-
+                            
                             // ペットの性別を登録。viewModelのgenderとバインディング。
                             Text("性別")
                                 .font(.custom("Jiyucho", size: 20))
@@ -120,7 +120,7 @@ struct CatRegisterView: View {
                                 .cornerRadius(12)
                         }
                         .padding(.top)
-
+                        
                         NavigationLink(destination: CatSelectView(), isActive: $isCatSelectActive) {
                             EmptyView()
                         }

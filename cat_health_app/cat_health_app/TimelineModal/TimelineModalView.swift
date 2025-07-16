@@ -10,7 +10,7 @@ import SwiftUI
 struct TimelineModalView: View {
     let records: [RecordEntity]
     let selectedDate: Date
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -18,7 +18,7 @@ struct TimelineModalView: View {
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
-
+                
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color.white.opacity(0.2),
@@ -29,18 +29,20 @@ struct TimelineModalView: View {
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
-
+                
                 VStack(spacing: 12) {
+                    // タップされた日付を表示
                     Text(formattedDate(selectedDate))
                         .font(.custom("Jiyucho", size: 24))
                         .padding(.top)
-
+                    
                     if records.isEmpty {
                         Text("この日の記録はありません")
                             .font(.custom("Jiyucho", size: 18))
                             .foregroundColor(.gray)
                             .padding()
                     } else {
+                        // その日のタイムラインを表示
                         ScrollView {
                             ForEach(records, id: \.objectID) { record in
                                 HStack(spacing: 12) {
@@ -60,7 +62,7 @@ struct TimelineModalView: View {
                             }
                         }
                     }
-
+                    
                     Spacer()
                 }
                 .frame(width: 400)
@@ -68,7 +70,8 @@ struct TimelineModalView: View {
             }
         }
     }
-
+    
+    // 日付の表示を変換
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")!
@@ -76,14 +79,16 @@ struct TimelineModalView: View {
         formatter.dateStyle = .long
         return formatter.string(from: date)
     }
-
+    
+    // 時間表記を変換
     private func timeFormatter(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
     }
-
+    
+    // タイムラインの項目表示方法の変更
     private func formatContent(_ record: RecordEntity) -> String {
         let name = record.categoryName ?? ""
         let detail = record.detail ?? ""

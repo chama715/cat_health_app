@@ -5,6 +5,7 @@
 //  Created by 高橋直斗 on 2025/07/09.
 //
 
+// ティファニーブルーを保存
 import SwiftUI
 
 extension Color {

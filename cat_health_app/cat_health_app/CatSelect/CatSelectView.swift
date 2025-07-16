@@ -12,22 +12,21 @@ struct CatSelectView: View {
     @StateObject private var viewModel: CatSelectViewModel
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
     @State private var isMainViewActive = false
-    @State private var isCatRegisterActive = false  // ← 登録画面用の状態追加
-
+    @State private var isCatRegisterActive = false
+    
     init() {
         let context = PersistenceController.shared.container.viewContext
         _viewModel = StateObject(wrappedValue: CatSelectViewModel(context: context))
     }
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
-                // 背景画像とグラデーション
                 Image("paw_background")
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
-
+                
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color.white.opacity(0.2),
@@ -38,8 +37,9 @@ struct CatSelectView: View {
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
-
+                
                 VStack {
+                    // 猫が登録されていなければ...されていれば...表示
                     if viewModel.cats.isEmpty {
                         Text("登録された猫がいません")
                             .font(.custom("Jiyucho", size: 24))
@@ -48,6 +48,7 @@ struct CatSelectView: View {
                         ScrollView {
                             VStack(spacing: 12) {
                                 ForEach(viewModel.cats, id: \.id) { cat in
+                                    // 写真が登録されていればそれを表示。されていなければ、デフォの画像なしを表示。
                                     HStack {
                                         if let imageData = cat.imageData,
                                            let uiImage = UIImage(data: imageData) {
@@ -65,7 +66,8 @@ struct CatSelectView: View {
                                                 .clipShape(Circle())
                                                 .overlay(Circle().stroke(Color.gray, lineWidth: 1))
                                         }
-
+                                        
+                                        // 名前や猫種、年齢を登録されていれば表示。
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(cat.name ?? "名前なし")
                                                 .font(.custom("Jiyucho", size: 20))
@@ -85,6 +87,8 @@ struct CatSelectView: View {
                                     .padding()
                                     .background(Color.white.opacity(0.8))
                                     .cornerRadius(12)
+                                    
+                                    // 猫の欄をタップすると実行
                                     .onTapGesture {
                                         viewModel.selectCat(cat)
                                         if let id = cat.id?.uuidString {
@@ -97,8 +101,8 @@ struct CatSelectView: View {
                             .padding()
                         }
                     }
-
-                    // 🔹 ペット登録ボタン
+                    
+                    // ペット登録のボタン
                     NavigationLink(destination: CatRegisterView(), isActive: $isCatRegisterActive) {
                         Button(action: {
                             isCatRegisterActive = true
@@ -115,8 +119,8 @@ struct CatSelectView: View {
                     }
                     .padding(.bottom, 20)
                 }
-
-                // 🔹 メイン画面への遷移リンク
+                
+                // 猫をタップした時の画面遷移のリンク。メイン画面へ。
                 NavigationLink(destination: MainView(), isActive: $isMainViewActive) {
                     EmptyView()
                 }
@@ -126,8 +130,4 @@ struct CatSelectView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-}
-
-#Preview {
-    CatSelectView()
 }

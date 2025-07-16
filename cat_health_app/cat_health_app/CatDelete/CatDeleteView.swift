@@ -14,15 +14,15 @@ struct CatDeleteView: View {
         entity: CatEntity.entity(),
         sortDescriptors: []
     ) var allCats: FetchedResults<CatEntity>
-
+    
     @StateObject private var viewModel = SettingViewModel()
     @EnvironmentObject var navigationModel: NavigationModel
     @Environment(\.dismiss) private var dismiss
-
+    
     @State private var isReturnToTitleActive = false
     @State private var showingDeleteAlert = false
     @State private var selectedCatToDelete: CatEntity? = nil
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -30,7 +30,7 @@ struct CatDeleteView: View {
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
-
+                
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color.white.opacity(0.2),
@@ -41,18 +41,20 @@ struct CatDeleteView: View {
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
-
+                
                 VStack(spacing: 20) {
                     Text("削除するペットを選んでください")
                         .font(.custom("Jiyucho", size: 24))
                         .padding()
-
+                    
+                    // 登録されている猫がいない場合
                     if allCats.isEmpty {
                         Text("登録されたペットがいません")
                             .font(.custom("Jiyucho", size: 20))
                             .foregroundColor(.gray)
                             .padding(.top, 60)
                     } else {
+                        // いた場合はリスト表示。1匹ずつ削除ボタン付き
                         List {
                             ForEach(allCats, id: \.self) { cat in
                                 Button(role: .destructive) {
@@ -72,7 +74,7 @@ struct CatDeleteView: View {
                                                 .frame(width: 40, height: 40)
                                                 .clipShape(Circle())
                                         }
-
+                                        
                                         VStack(alignment: .leading) {
                                             Text(cat.name ?? "名前なし")
                                                 .font(.custom("Jiyucho", size: 18))
@@ -95,16 +97,17 @@ struct CatDeleteView: View {
                     }
                 }
                 .frame(width: 400)
-
+                
                 NavigationLink(destination: TitleView().environmentObject(navigationModel),
                                isActive: $isReturnToTitleActive) {
                     EmptyView()
                 }
-                .hidden()
+                               .hidden()
             }
             .navigationTitle("ペットを削除")
             .navigationBarTitleDisplayMode(.inline)
-
+            
+            // 確かめのためのダイアログ
             .alert("このペットと記録を削除しますか？", isPresented: $showingDeleteAlert) {
                 Button("削除", role: .destructive) {
                     if let id = selectedCatToDelete?.id {
