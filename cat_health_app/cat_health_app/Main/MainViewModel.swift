@@ -68,8 +68,9 @@ class MainViewModel: ObservableObject {
             records = entities.map { entity in
                 CatRecord(
                     time: timeFormatter(date: entity.time ?? Date()),
-                    content: formatContent(name: entity.categoryName ?? "", detail: entity.detail),
-                    iconName: entity.iconName ?? "questionmark"
+                    content: formatContent(name: entity.categoryName ?? "", detail: entity.detail ?? ""),
+                    iconName: entity.iconName ?? "questionmark",
+                    detail: entity.detail ?? ""
                 )
             }
         } catch {
@@ -77,6 +78,55 @@ class MainViewModel: ObservableObject {
             records = []
         }
     }
+    
+    // タイムラインから記録を削除する処理
+    func deleteRecord(_ record: CatRecord) {
+        guard let catUUID = UUID(uuidString: selectedCatID) else {
+            print("⚠️ selectedCatIDが不正です")
+            return
+        }
+
+        let request: NSFetchRequest<RecordEntity> = RecordEntity.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "catID == %@ AND iconName == %@ AND time >= %@ AND time <= %@",
+            catUUID as CVarArg,
+            record.iconName as CVarArg,
+            startOfDay(for: record.time) as CVarArg,
+            endOfDay(for: record.time) as CVarArg
+        )
+
+        do {
+            let results = try context.fetch(request)
+            if let entityToDelete = results.first {
+                context.delete(entityToDelete)
+                try context.save()
+                print("🗑️ 記録を削除しました: \(record.content)")
+            } else {
+                print("⚠️ 該当する記録が見つかりませんでした")
+            }
+        } catch {
+            print("❌ 記録の削除に失敗: \(error.localizedDescription)")
+        }
+    }
+
+    // 指定時刻の0時
+    private func startOfDay(for timeString: String) -> Date {
+        let now = Date()
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        formatter.dateFormat = "HH:mm"
+        guard let time = formatter.date(from: timeString) else { return now }
+        
+        let components = Calendar.current.dateComponents([.hour, .minute], from: time)
+        let today = calendar.startOfDay(for: now)
+        return calendar.date(bySettingHour: components.hour ?? 0, minute: components.minute ?? 0, second: 0, of: today)!
+    }
+
+    private func endOfDay(for timeString: String) -> Date {
+        return calendar.date(byAdding: .minute, value: 1, to: startOfDay(for: timeString))!
+    }
+
+    
     
     // CoreDataに保存する処理
     func addRecord(category: RecordCategory, detail: String = "", for date: Date) {

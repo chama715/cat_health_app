@@ -14,7 +14,7 @@ struct cat_health_appApp: App {
 
     var body: some Scene {
         WindowGroup {
-            TitleView()
+            LaunchScreenWrapper()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(navigationModel)
         }

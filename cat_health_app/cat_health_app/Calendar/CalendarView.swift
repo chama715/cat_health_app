@@ -10,7 +10,8 @@ import SwiftUI
 struct CalendarView: View {
     @StateObject private var viewModel = CalendarViewModel()
     @State private var showTimelineModal = false
-    
+    @State private var alreadyShown = false  // ← 追加
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -35,7 +36,7 @@ struct CalendarView: View {
                         .font(.custom("Jiyucho", size: 28))
                         .padding(.top, 20)
                     
-                    // DataPickerでカレンダーを表示
+                    // カレンダー表示
                     DatePicker("日付を選択", selection: $viewModel.selectedDate, displayedComponents: .date)
                         .datePickerStyle(.graphical)
                         .onChange(of: viewModel.selectedDate) { _ in
@@ -48,7 +49,15 @@ struct CalendarView: View {
                 }
                 .frame(width: 400)
                 .padding()
-                
+                .onAppear {
+                    // 表示されたときに初期値でモーダルを1回だけ表示
+                    if !alreadyShown {
+                        alreadyShown = true
+                        viewModel.fetchRecordsForSelectedDate()
+                        showTimelineModal = true
+                    }
+                }
+
                 // モーダル表示
                 .sheet(isPresented: $showTimelineModal) {
                     TimelineModalView(records: viewModel.records, selectedDate: viewModel.selectedDate)

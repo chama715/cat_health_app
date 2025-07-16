@@ -12,6 +12,7 @@ struct CatRecord: Identifiable {
     let time: String
     let content: String
     let iconName: String
+    let detail: String
 }
 
 struct RecordCategory: Identifiable {

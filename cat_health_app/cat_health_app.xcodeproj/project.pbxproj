@@ -6,11 +6,27 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		A31B41DF2E27524D00005860 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A3CF358D2E1E3B9200E8135C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A3CF35942E1E3B9200E8135C;
+			remoteInfo = cat_health_app;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		A31B41DB2E27524D00005860 /* CatHealthTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CatHealthTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3CF35952E1E3B9200E8135C /* cat_health_app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cat_health_app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		A31B41DC2E27524D00005860 /* CatHealthTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CatHealthTests;
+			sourceTree = "<group>";
+		};
 		A3CF35972E1E3B9200E8135C /* cat_health_app */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = cat_health_app;
@@ -19,6 +35,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A31B41D82E27524D00005860 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A3CF35922E1E3B9200E8135C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				A3CF35972E1E3B9200E8135C /* cat_health_app */,
+				A31B41DC2E27524D00005860 /* CatHealthTests */,
 				A3CF35962E1E3B9200E8135C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				A3CF35952E1E3B9200E8135C /* cat_health_app.app */,
+				A31B41DB2E27524D00005860 /* CatHealthTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +73,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A31B41DA2E27524D00005860 /* CatHealthTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A31B41E12E27524D00005860 /* Build configuration list for PBXNativeTarget "CatHealthTests" */;
+			buildPhases = (
+				A31B41D72E27524D00005860 /* Sources */,
+				A31B41D82E27524D00005860 /* Frameworks */,
+				A31B41D92E27524D00005860 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A31B41E02E27524D00005860 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A31B41DC2E27524D00005860 /* CatHealthTests */,
+			);
+			name = CatHealthTests;
+			packageProductDependencies = (
+			);
+			productName = CatHealthTests;
+			productReference = A31B41DB2E27524D00005860 /* CatHealthTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		A3CF35942E1E3B9200E8135C /* cat_health_app */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A3CF35A02E1E3B9500E8135C /* Build configuration list for PBXNativeTarget "cat_health_app" */;
@@ -80,6 +128,10 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					A31B41DA2E27524D00005860 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = A3CF35942E1E3B9200E8135C;
+					};
 					A3CF35942E1E3B9200E8135C = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -100,11 +152,19 @@
 			projectRoot = "";
 			targets = (
 				A3CF35942E1E3B9200E8135C /* cat_health_app */,
+				A31B41DA2E27524D00005860 /* CatHealthTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A31B41D92E27524D00005860 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A3CF35932E1E3B9200E8135C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +175,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A31B41D72E27524D00005860 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A3CF35912E1E3B9200E8135C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +191,51 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A31B41E02E27524D00005860 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A3CF35942E1E3B9200E8135C /* cat_health_app */;
+			targetProxy = A31B41DF2E27524D00005860 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		A31B41E22E27524D00005860 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D4G4RQY4T6;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gmail.naoto0715charlie.CatHealthTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cat_health_app.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/cat_health_app";
+			};
+			name = Debug;
+		};
+		A31B41E32E27524D00005860 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D4G4RQY4T6;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gmail.naoto0715charlie.CatHealthTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cat_health_app.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/cat_health_app";
+			};
+			name = Release;
+		};
 		A3CF359E2E1E3B9500E8135C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -257,7 +368,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "cat-health-app-Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_CFBundleDisplayName = "ねこ手帳";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -270,9 +382,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.gmail.naoto0715charlie.cat-health-app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -287,7 +403,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "cat-health-app-Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_CFBundleDisplayName = "ねこ手帳";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -300,15 +417,28 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.gmail.naoto0715charlie.cat-health-app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A31B41E12E27524D00005860 /* Build configuration list for PBXNativeTarget "CatHealthTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A31B41E22E27524D00005860 /* Debug */,
+				A31B41E32E27524D00005860 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A3CF35902E1E3B9200E8135C /* Build configuration list for PBXProject "cat_health_app" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
