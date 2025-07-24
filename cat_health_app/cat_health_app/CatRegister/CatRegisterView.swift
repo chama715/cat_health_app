@@ -16,7 +16,6 @@ struct CatRegisterView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // 背景
                 Image("paw_background")
                     .resizable()
                     .scaledToFill()
@@ -40,14 +39,12 @@ struct CatRegisterView: View {
                             .padding(.bottom)
                         
                         Group {
-                            // ペットの名前を登録。viewModelのcatNameとバインディング。
                             Text("名前")
                                 .font(.custom("Jiyucho", size: 20))
                             TextField("例: たま", text: $viewModel.catName)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .frame(width: 400)
-                            
-                            // ペットの性別を登録。viewModelのgenderとバインディング。
+                                .frame(width: 350)
+
                             Text("性別")
                                 .font(.custom("Jiyucho", size: 20))
                             Picker("性別", selection: $viewModel.gender) {
@@ -56,17 +53,14 @@ struct CatRegisterView: View {
                                 }
                             }
                             .pickerStyle(SegmentedPickerStyle())
-                            .frame(width: 400)
-                            
-                            // ペットの種類を登録。viewModelのbreedとバインディング。
+                            .frame(width: 350)
+
                             Text("猫種")
                                 .font(.custom("Jiyucho", size: 20))
                             TextField("例: スコティッシュフォールド", text: $viewModel.breed)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .frame(width: 400)
-                            
-                            // ペットの生年月日を登録。viewModelのbirthDateとバインディング。
-                            // viewModelのプロパティを通じて、生年月日から年齢を表示。
+                                .frame(width: 350)
+
                             Text("生年月日")
                                 .font(.custom("Jiyucho", size: 20))
                             DatePicker("", selection: $viewModel.birthDate, displayedComponents: .date)
@@ -78,9 +72,7 @@ struct CatRegisterView: View {
                                 .font(.custom("Jiyucho", size: 20))
                                 .padding(.top)
                         }
-                        
-                        // 写真の設定。
-                        // 写真アプリから猫の写真を選択。
+
                         Text("写真")
                             .font(.custom("Jiyucho", size: 20))
                         PhotosPicker(selection: $viewModel.selectedPhoto, matching: .images) {
@@ -104,9 +96,8 @@ struct CatRegisterView: View {
                                 }
                             }
                         }
-                        .frame(width: 400)
-                        
-                        // ペット選択への画面遷移。同時にペット情報を保存。
+                        .frame(width: 350)
+
                         Button(action: {
                             viewModel.saveCat(context: context)
                             isCatSelectActive = true

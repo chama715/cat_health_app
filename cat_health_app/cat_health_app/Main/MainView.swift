@@ -18,6 +18,7 @@ struct MainView: View {
     @State private var isTitleReturnActive = false
     @State private var isCalendarActive = false
 
+
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
 
     @FetchRequest(entity: CatEntity.entity(), sortDescriptors: [])
@@ -170,12 +171,17 @@ struct MainView: View {
 
     // MARK: - タイムライン表示
     private var timelineView: some View {
-        ZStack {
+
+        let screenHeight = UIScreen.main.bounds.height
+
+        let timelineHeight: CGFloat = screenHeight > 800 ? 500 : 350
+
+        return ZStack {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.white.opacity(0.8))
                 .shadow(radius: 5)
                 .padding(.horizontal)
-                .frame(width: 400, height: 500)
+                .frame(width: 400, height: timelineHeight)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
@@ -185,7 +191,7 @@ struct MainView: View {
                 }
                 .padding(.vertical)
             }
-            .frame(width: 370, height: 500)
+            .frame(width: 400, height: timelineHeight)
         }
     }
 
@@ -217,6 +223,7 @@ struct MainView: View {
 
     // MARK: - カテゴリーのタイル
     private var categoryGridView: some View {
+        
         let columns = Array(repeating: GridItem(.fixed(50)), count: 6)
 
         return LazyVGrid(columns: columns, spacing: 4) {

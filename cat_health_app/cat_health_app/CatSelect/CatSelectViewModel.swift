@@ -10,8 +10,7 @@ import CoreData
 
 @MainActor
 class CatSelectViewModel: ObservableObject {
-    
-    // 猫データのリスト
+
     @Published var cats: [CatEntity] = []
     
     private let context: NSManagedObjectContext

@@ -11,21 +11,13 @@ import CoreData
 
 class CatRegisterViewModel: ObservableObject {
     // MARK: - 猫の情報を登録するための状態
-    // 猫の名前
     @Published var catName: String = ""
-    // 猫の性別
     @Published var gender: String = "オス"
-    // 猫の種類
     @Published var breed: String = ""
-    // 猫の生年月日
     @Published var birthDate: Date = Date()
-    // 猫の写真
     @Published var selectedPhoto: PhotosPickerItem?
-    // 猫の写真(表示用)
     @Published var selectedImage: Image?
-    // 性別の選択肢
     let genders = ["オス", "メス"]
-    // 生年月日を日本風に変更するためのフォーマット
     var birthDateFormatted: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP")
