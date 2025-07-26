@@ -38,10 +38,8 @@ struct SettingView: View {
                 Text("設定")
                     .font(.custom("Jiyucho", size: 28))
                     .padding(.top, 40)
-                
-                // リスト表示
+
                 List {
-                    // アプリ情報として開発者メッセージ、使い方ガイド、アプリのバージョン
                     Section(header: Text("アプリ情報")) {
                         NavigationLink(destination: DeveloperMessageView()) {
                             Text("開発者からのメッセージ")
@@ -70,8 +68,7 @@ struct SettingView: View {
                         }
                         
                     }
-                    
-                    // データ管理として、全削除と個別削除
+
                     Section(header: Text("データ管理")) {
                         Button("全てのデータを削除") {
                             showingDeleteAlert = true
@@ -97,15 +94,13 @@ struct SettingView: View {
                 .padding()
             }
             .frame(width: 400)
-            
-            // 削除→タイトルに戻るためのリンク
+
             NavigationLink(destination: TitleView().environmentObject(navigationModel),
                            isActive: $isReturnToTitleActive) {
                 EmptyView()
             }
                            .hidden()
-            
-            // 個別削除へのリンク
+
             NavigationLink(destination: CatDeleteView(), isActive: $isCatDeleteActive) {
                 EmptyView()
             }

@@ -46,15 +46,13 @@ struct CatDeleteView: View {
                     Text("削除するペットを選んでください")
                         .font(.custom("Jiyucho", size: 24))
                         .padding()
-                    
-                    // 登録されている猫がいない場合
+
                     if allCats.isEmpty {
                         Text("登録されたペットがいません")
                             .font(.custom("Jiyucho", size: 20))
                             .foregroundColor(.gray)
                             .padding(.top, 60)
                     } else {
-                        // いた場合はリスト表示。1匹ずつ削除ボタン付き
                         List {
                             ForEach(allCats, id: \.self) { cat in
                                 Button(role: .destructive) {
@@ -106,8 +104,7 @@ struct CatDeleteView: View {
             }
             .navigationTitle("ペットを削除")
             .navigationBarTitleDisplayMode(.inline)
-            
-            // 確かめのためのダイアログ
+
             .alert("このペットと記録を削除しますか？", isPresented: $showingDeleteAlert) {
                 Button("削除", role: .destructive) {
                     if let id = selectedCatToDelete?.id {

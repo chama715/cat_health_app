@@ -10,10 +10,10 @@ import CoreData
 import SwiftUI
 
 class MainViewModel: ObservableObject {
-    // 表示する記録を格納しておく状態
-    @Published var records: [CatRecord] = []
     
-    // 下部に並ぶタイルのそれぞれの定義（詳細情報の入力が必要なものはtrue）
+    // MARK: - 各種状態
+    @Published var records: [CatRecord] = []
+
     let categories: [RecordCategory] = [
         RecordCategory(name: "おしっこ", iconName: "toilet", requiresDetail: false),
         RecordCategory(name: "うんち", iconName: "toilet.fill", requiresDetail: true),
@@ -31,15 +31,14 @@ class MainViewModel: ObservableObject {
     
     private let context = PersistenceController.shared.container.viewContext
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
-    
-    // 日本用のカレンダーに変換（アメリカ時間にならないため）
+
     private var calendar: Calendar {
         var cal = Calendar.current
         cal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         return cal
     }
-    
-    // 猫データを取得してViewに表示させるための関数
+
+    // MARK: - 記録を取得する関数
     func fetchRecords(for date: Date) {
         guard let catUUID = UUID(uuidString: selectedCatID) else {
             print("⚠️ selectedCatIDが不正です")
@@ -78,8 +77,8 @@ class MainViewModel: ObservableObject {
             records = []
         }
     }
-    
-    // タイムラインから記録を削除する処理
+
+    // MARK: - 記録を削除する関数
     func deleteRecord(_ record: CatRecord) {
         guard let catUUID = UUID(uuidString: selectedCatID) else {
             print("⚠️ selectedCatIDが不正です")
@@ -109,7 +108,7 @@ class MainViewModel: ObservableObject {
         }
     }
 
-    // 指定時刻の0時
+    // MARK: - 時間の文字列をDate型に変換する関数
     private func startOfDay(for timeString: String) -> Date {
         let now = Date()
         let formatter = DateFormatter()
@@ -122,13 +121,12 @@ class MainViewModel: ObservableObject {
         return calendar.date(bySettingHour: components.hour ?? 0, minute: components.minute ?? 0, second: 0, of: today)!
     }
 
+    // MARK: - 1分後の時刻を作る関数
     private func endOfDay(for timeString: String) -> Date {
         return calendar.date(byAdding: .minute, value: 1, to: startOfDay(for: timeString))!
     }
 
-    
-    
-    // CoreDataに保存する処理
+    // MARK: - 記録を保存する関数
     func addRecord(category: RecordCategory, detail: String = "", for date: Date) {
         guard let uuid = UUID(uuidString: selectedCatID) else {
             print("⚠️ selectedCatIDが不正 or 未設定")
@@ -158,13 +156,12 @@ class MainViewModel: ObservableObject {
             print("❌ 記録の保存に失敗: \(error.localizedDescription)")
         }
     }
-    
-    // CoreDataに保存する処理
+
     func addRecord(category: RecordCategory, for date: Date) {
         addRecord(category: category, detail: "", for: date)
     }
     
-    // タイムラインに表示するテキストの処理
+    // MARK: - 記録内容をタイムラインの文字列に変換する関数
     private func formatContent(name: String, detail: String?) -> String {
         if name == "日記" {
             return "日記"
@@ -178,32 +175,30 @@ class MainViewModel: ObservableObject {
             return name
         }
     }
-    
-    // 時間の表示を変更
+
+    // MARK: - 時刻を変換する関数
     private func timeFormatter(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
     }
-    
-    // 年月日の表示を変更
+
     private func formatted(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.string(from: date)
     }
-    
-    // ログ出力などで正確な日時を表示するための処理
+
     private func formatJST(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
         return formatter.string(from: date)
     }
-    
-    // 1年以上前のデータを削除する処理
+
+    // MARK: - 古い記録を削除する関数
     func deleteOldRecords(olderThan days: Int) {
         let cutoffDate = calendar.date(byAdding: .day, value: -days, to: Date())!
         

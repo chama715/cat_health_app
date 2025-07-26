@@ -54,8 +54,7 @@ struct HelpPageView: View {
                     }
                     .padding()
                 }
-                
-                // 設定画面に遷移
+
                 Button(action: {
                     dismiss()
                 }) {
@@ -66,8 +65,6 @@ struct HelpPageView: View {
                         .background(Color.blue.opacity(0.7))
                         .cornerRadius(10)
                 }
-                
-                
             }
             .frame(width: 400)
             .padding()

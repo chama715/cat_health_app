@@ -84,8 +84,7 @@ struct CatSelectView: View {
                                     .padding()
                                     .background(Color.white.opacity(0.8))
                                     .cornerRadius(12)
-                                    
-                                    // 猫の欄をタップすると実行
+
                                     .onTapGesture {
                                         viewModel.selectCat(cat)
                                         if let id = cat.id?.uuidString {

@@ -57,7 +57,6 @@ struct DeveloperMessageView: View {
                 }
                 .frame(width: 400)
 
-                // 設定画面に遷移
                 Button(action: {
                     dismiss()
                 }) {

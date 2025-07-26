@@ -18,7 +18,6 @@ struct MainView: View {
     @State private var isTitleReturnActive = false
     @State private var isCalendarActive = false
 
-
     @AppStorage("selectedCatID") private var selectedCatID: String = ""
 
     @FetchRequest(entity: CatEntity.entity(), sortDescriptors: [])
@@ -254,7 +253,6 @@ struct MainView: View {
         }
     }
 
-    // カテゴリーボタンタップ時の処理
     private func handleCategoryTap(_ category: RecordCategory) {
         switch category.name {
         case "猫選択":

@@ -23,12 +23,10 @@ struct DetailInputView: View {
     
     var body: some View {
         NavigationStack {
-            // 詳細入力のモーダル
             VStack(spacing: 16) {
                 Text("詳細入力：\(RecordCategory.name)")
                     .font(.custom("Jiyucho", size: 20))
-                
-                // うんちの場合
+
                 if RecordCategory.name == "うんち" {
                     Picker("状態を選択", selection: $selectedPoop) {
                         ForEach(poopOptions, id: \.self) { option in
@@ -47,8 +45,7 @@ struct DetailInputView: View {
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-                    
-                    // ごはんの場合
+
                 } else if RecordCategory.name == "ごはん" {
                     TextField("g数を入力（任意）", text: $gramText)
                         .keyboardType(.numberPad)
@@ -65,8 +62,7 @@ struct DetailInputView: View {
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-                    
-                    // 体重の場合
+
                 } else if RecordCategory.name == "体重" {
                     TextField("体重を入力（例: 4.2）", text: $weightText)
                         .keyboardType(.decimalPad)
@@ -87,8 +83,7 @@ struct DetailInputView: View {
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-                    
-                    // 日記の場合
+
                 } else if RecordCategory.name == "日記" {
                     TextEditor(text: $diaryText)
                         .frame(height: 200)
@@ -106,7 +101,6 @@ struct DetailInputView: View {
                     .cornerRadius(10)
                     
                 } else {
-                    // その他
                     TextField("詳細を入力", text: $detailText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
@@ -127,8 +121,7 @@ struct DetailInputView: View {
             .background(Color.white.opacity(0.8))
             .cornerRadius(10)
             .padding()
-            
-            // ナビゲーションバーのタイトル
+
             .navigationTitle("詳細入力")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
