@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// 猫の情報
 struct CatRecord: Identifiable {
     let id = UUID()
     let time: String
@@ -15,6 +16,7 @@ struct CatRecord: Identifiable {
     let detail: String
 }
 
+// 記録の種類
 struct RecordCategory: Identifiable {
     let id = UUID()
     let name: String
@@ -22,6 +24,7 @@ struct RecordCategory: Identifiable {
     let requiresDetail: Bool
 }
 
+// 画面遷移
 class NavigationModel: ObservableObject {
     @Published var path = NavigationPath()
 }

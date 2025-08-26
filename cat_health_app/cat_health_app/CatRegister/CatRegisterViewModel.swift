@@ -32,10 +32,12 @@ class CatRegisterViewModel: ObservableObject {
         return ageComponents
     }
     
+    // 年
     var ageYearsText: Int {
         calculateAgeComponents().year ?? 0
     }
     
+    // 月
     var ageMonthsText: Int {
         calculateAgeComponents().month ?? 0
     }

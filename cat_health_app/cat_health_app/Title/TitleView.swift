@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TitleView: View {
+    // ナビゲーションモデルを呼び出し
     @EnvironmentObject var navigationModel: NavigationModel
     
     var body: some View {
